@@ -42,7 +42,6 @@ class NumberField extends StatelessWidget {
         labelText: label,
         suffixText: suffix,
         hintText: hint,
-        border: const OutlineInputBorder(),
       ),
       validator: (value) {
         final raw = (value ?? '').trim();

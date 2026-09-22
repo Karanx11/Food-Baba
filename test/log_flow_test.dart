@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:food_baba/features/food_search/presentation/food_search_page.dart';
 import 'package:food_baba/features/log/domain/food_entry.dart';
 import 'package:food_baba/features/log/presentation/food_entry_form_page.dart';
 import 'package:food_baba/features/shell/home_shell.dart';
@@ -17,7 +18,7 @@ Future<void> _openLog(WidgetTester tester) async {
 
   await tester.pumpWidget(testApp(home: const HomeShell()));
   await tester.pumpAndSettle();
-  await tester.tap(find.text('Log'));
+  await tester.tap(find.byTooltip('Food log'));
   await tester.pumpAndSettle();
 }
 
@@ -28,7 +29,11 @@ Future<void> _addFood(
   required String calories,
   String protein = '',
 }) async {
+  // Add opens food search; the custom-food option leads to the manual form.
   await tester.tap(find.byKey(Key('add-${meal.name}')));
+  await tester.pumpAndSettle();
+  expect(find.byType(FoodSearchPage), findsOneWidget);
+  await tester.tap(find.byKey(const Key('create-custom-food')));
   await tester.pumpAndSettle();
   expect(find.byType(FoodEntryFormPage), findsOneWidget);
 
@@ -40,6 +45,7 @@ Future<void> _addFood(
   await tester.tap(find.text('Add to ${meal.label}'));
   await tester.pumpAndSettle();
   expect(find.byType(FoodEntryFormPage), findsNothing);
+  expect(find.byType(FoodSearchPage), findsNothing);
 }
 
 void main() {
@@ -52,7 +58,10 @@ void main() {
     expect(find.text('Nothing logged yet'), findsNWidgets(4));
     expect(find.text('0'), findsOneWidget);
     expect(find.text('kcal eaten'), findsOneWidget);
-    expect(find.text('Set up your profile to get daily targets.'), findsOneWidget);
+    expect(
+      find.text('Set up your profile to get daily targets.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('adding a food to lunch updates the meal and day totals', (
@@ -118,6 +127,8 @@ void main() {
     await _addFood(tester, meal: MealType.lunch, name: 'Dal', calories: '180');
 
     await tester.tap(find.byKey(const Key('add-dinner')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('create-custom-food')));
     await tester.pumpAndSettle();
     expect(find.text('Recent'), findsOneWidget);
 

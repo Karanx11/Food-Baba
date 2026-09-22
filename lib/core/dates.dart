@@ -41,3 +41,14 @@ String friendlyDay(DateTime day, {required DateTime today}) {
   if (d == DateTime(t.year, t.month, t.day + 1)) return 'Tomorrow';
   return shortDate(d);
 }
+
+/// "Mon" … "Sun".
+String weekdayShort(DateTime d) => _weekdays[d.weekday - 1];
+
+/// Whole calendar days from [from] to [to]; negative when [to] is earlier.
+/// Uses UTC dates so daylight-saving changes can't skew the count.
+int daysBetween(DateTime from, DateTime to) => DateTime.utc(
+  to.year,
+  to.month,
+  to.day,
+).difference(DateTime.utc(from.year, from.month, from.day)).inDays;

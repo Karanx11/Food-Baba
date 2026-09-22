@@ -43,6 +43,12 @@ final dayEntriesProvider = StreamProvider.family<List<FoodEntry>, String>(
   (ref, dayKey) => ref.watch(foodLogRepositoryProvider).watchDay(dayKey),
 );
 
+/// Days with food logged in an inclusive (from, to) day-key range.
+final loggedDaysProvider = StreamProvider.family<Set<String>, (String, String)>(
+  (ref, range) =>
+      ref.watch(foodLogRepositoryProvider).watchLoggedDays(range.$1, range.$2),
+);
+
 final waterProvider = StreamProvider.family<int, String>(
   (ref, dayKey) => ref.watch(foodLogRepositoryProvider).watchWater(dayKey),
 );

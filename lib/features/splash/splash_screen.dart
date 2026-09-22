@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/loaders/burger_loader.dart';
+import '../../core/widgets/surfaces.dart';
 import '../shell/home_shell.dart';
 
 /// Branded launch screen. Shows the burger loader for [minimumDuration], then
@@ -39,7 +40,8 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 400),
-        pageBuilder: (_, _, _) => const HomeShell(),
+        // Custom routes skip the theme's transitions, so add the background here.
+        pageBuilder: (_, _, _) => const AppBackground(child: HomeShell()),
         transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
       ),

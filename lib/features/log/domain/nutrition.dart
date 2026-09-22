@@ -74,15 +74,8 @@ class Nutrition {
       other.sodiumMg == sodiumMg;
 
   @override
-  int get hashCode => Object.hash(
-    calories,
-    proteinG,
-    carbsG,
-    fatG,
-    sugarG,
-    fiberG,
-    sodiumMg,
-  );
+  int get hashCode =>
+      Object.hash(calories, proteinG, carbsG, fatG, sugarG, fiberG, sodiumMg);
 
   @override
   String toString() =>

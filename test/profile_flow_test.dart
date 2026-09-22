@@ -18,7 +18,7 @@ void main() {
     await tester.pumpWidget(testApp(home: const HomeShell(), repository: repo));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Profile'));
+    await tester.tap(find.byTooltip('Profile'));
     await tester.pumpAndSettle();
     expect(find.text('Set up your profile'), findsOneWidget);
 
@@ -107,5 +107,36 @@ void main() {
 
     expect(find.text('2711'), findsOneWidget);
     expect((await repo.load())?.weightKg, 80);
+  });
+
+  testWidgets('editing the profile keeps the goal weight', (tester) async {
+    final repo = InMemoryProfileRepository(
+      const UserProfile(
+        name: 'Asha',
+        sex: Sex.male,
+        age: 30,
+        heightCm: 175,
+        weightKg: 70,
+        activity: ActivityLevel.moderate,
+        goal: Goal.lose,
+        goalWeightKg: 65,
+        goalStartKg: 72,
+      ),
+    );
+    await tester.pumpWidget(
+      testApp(home: const ProfilePage(), repository: repo),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Edit profile'));
+    await tester.pumpAndSettle();
+    await tester.enterText(_field('30'), '31');
+    await tester.tap(find.text('Save profile'));
+    await tester.pumpAndSettle();
+
+    final saved = await repo.load();
+    expect(saved?.age, 31);
+    expect(saved?.goalWeightKg, 65);
+    expect(saved?.goalStartKg, 72);
   });
 }

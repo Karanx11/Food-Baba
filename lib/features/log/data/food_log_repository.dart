@@ -11,6 +11,9 @@ abstract interface class FoodLogRepository {
   Future<void> upsert(FoodEntry entry);
   Future<void> delete(String id);
 
+  /// Day keys between [fromKey] and [toKey] (inclusive) that have food.
+  Stream<Set<String>> watchLoggedDays(String fromKey, String toKey);
+
   /// Most recently logged foods, one per distinct name.
   Stream<List<FoodEntry>> watchRecent({int limit = 8});
 
@@ -50,6 +53,26 @@ class SembastFoodLogRepository implements FoodLogRepository {
   Future<void> delete(String id) async {
     final db = await _db.database;
     await _entries.record(id).delete(db);
+  }
+
+  @override
+  Stream<Set<String>> watchLoggedDays(String fromKey, String toKey) async* {
+    final db = await _db.database;
+    final query = _entries.query(
+      finder: Finder(
+        filter: Filter.and([
+          Filter.greaterThanOrEquals('dayKey', fromKey),
+          Filter.lessThanOrEquals('dayKey', toKey),
+        ]),
+      ),
+    );
+    yield* query
+        .onSnapshots(db)
+        .map(
+          (snapshots) => {
+            for (final s in snapshots) s.value['dayKey']! as String,
+          },
+        );
   }
 
   @override

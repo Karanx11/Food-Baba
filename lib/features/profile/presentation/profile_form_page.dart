@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/format.dart';
 import '../../../core/widgets/number_field.dart';
+import '../../../core/widgets/surfaces.dart';
+import '../../../core/widgets/top_bar.dart';
 import '../application/profile_providers.dart';
 import '../domain/nutrition_targets.dart';
 import '../domain/user_profile.dart';
@@ -15,8 +17,9 @@ class ProfileFormPage extends ConsumerStatefulWidget {
   /// Existing profile to edit, or null to set one up.
   final UserProfile? initial;
 
-  static Route<void> route({UserProfile? initial}) =>
-      MaterialPageRoute<void>(builder: (_) => ProfileFormPage(initial: initial));
+  static Route<void> route({UserProfile? initial}) => MaterialPageRoute<void>(
+    builder: (_) => ProfileFormPage(initial: initial),
+  );
 
   @override
   ConsumerState<ProfileFormPage> createState() => _ProfileFormPageState();
@@ -76,6 +79,8 @@ class _ProfileFormPageState extends ConsumerState<ProfileFormPage> {
       weightKg: weight,
       activity: _activity,
       goal: _goal,
+      goalWeightKg: widget.initial?.goalWeightKg,
+      goalStartKg: widget.initial?.goalStartKg,
     );
   }
 
@@ -107,8 +112,9 @@ class _ProfileFormPageState extends ConsumerState<ProfileFormPage> {
     final isNew = widget.initial == null;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isNew ? 'Set up your profile' : 'Edit profile'),
+      appBar: appTopBar(
+        context,
+        title: isNew ? 'Set up your profile' : 'Edit profile',
       ),
       body: Form(
         key: _formKey,
@@ -124,10 +130,7 @@ class _ProfileFormPageState extends ConsumerState<ProfileFormPage> {
                 controller: _name,
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'Name (optional)',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Name (optional)'),
               ),
               const SizedBox(height: 12),
               SegmentedButton<Sex>(
@@ -173,8 +176,7 @@ class _ProfileFormPageState extends ConsumerState<ProfileFormPage> {
               ),
               const SizedBox(height: 24),
               const _SectionTitle('Activity level'),
-              Card(
-                clipBehavior: Clip.antiAlias,
+              AppCard(
                 child: Column(
                   children: [
                     for (final level in ActivityLevel.values)
@@ -227,7 +229,7 @@ class _ProfileFormPageState extends ConsumerState<ProfileFormPage> {
               if (targets != null)
                 TargetsCard(targets: targets, title: 'Your targets')
               else
-                Card(
+                AppCard(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Row(
@@ -274,9 +276,8 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         title,
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+        style: Theme.of(context).textTheme.titleMedium
+            ?.copyWith(fontWeight: FontWeight.w700),
       ),
     );
   }

@@ -48,6 +48,8 @@ abstract final class ProfileLimits {
 
 /// What we know about the user; the input to target calculation.
 class UserProfile {
+  static const Object _unset = Object();
+
   const UserProfile({
     this.name = '',
     required this.sex,
@@ -56,6 +58,8 @@ class UserProfile {
     required this.weightKg,
     required this.activity,
     required this.goal,
+    this.goalWeightKg,
+    this.goalStartKg,
   });
 
   final String name;
@@ -66,6 +70,12 @@ class UserProfile {
   final ActivityLevel activity;
   final Goal goal;
 
+  /// Target body weight, if the user set one.
+  final double? goalWeightKg;
+
+  /// Body weight when the goal weight was set; progress is measured from it.
+  final double? goalStartKg;
+
   UserProfile copyWith({
     String? name,
     Sex? sex,
@@ -74,6 +84,8 @@ class UserProfile {
     double? weightKg,
     ActivityLevel? activity,
     Goal? goal,
+    Object? goalWeightKg = _unset,
+    Object? goalStartKg = _unset,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -83,6 +95,12 @@ class UserProfile {
       weightKg: weightKg ?? this.weightKg,
       activity: activity ?? this.activity,
       goal: goal ?? this.goal,
+      goalWeightKg: identical(goalWeightKg, _unset)
+          ? this.goalWeightKg
+          : goalWeightKg as double?,
+      goalStartKg: identical(goalStartKg, _unset)
+          ? this.goalStartKg
+          : goalStartKg as double?,
     );
   }
 
@@ -94,6 +112,8 @@ class UserProfile {
     'weightKg': weightKg,
     'activity': activity.name,
     'goal': goal.name,
+    'goalWeightKg': goalWeightKg,
+    'goalStartKg': goalStartKg,
   };
 
   factory UserProfile.fromJson(Map<String, Object?> json) {
@@ -105,6 +125,8 @@ class UserProfile {
       weightKg: (json['weightKg'] as num).toDouble(),
       activity: ActivityLevel.values.byName(json['activity'] as String),
       goal: Goal.values.byName(json['goal'] as String),
+      goalWeightKg: (json['goalWeightKg'] as num?)?.toDouble(),
+      goalStartKg: (json['goalStartKg'] as num?)?.toDouble(),
     );
   }
 
@@ -117,11 +139,22 @@ class UserProfile {
       other.heightCm == heightCm &&
       other.weightKg == weightKg &&
       other.activity == activity &&
-      other.goal == goal;
+      other.goal == goal &&
+      other.goalWeightKg == goalWeightKg &&
+      other.goalStartKg == goalStartKg;
 
   @override
-  int get hashCode =>
-      Object.hash(name, sex, age, heightCm, weightKg, activity, goal);
+  int get hashCode => Object.hash(
+    name,
+    sex,
+    age,
+    heightCm,
+    weightKg,
+    activity,
+    goal,
+    goalWeightKg,
+    goalStartKg,
+  );
 
   @override
   String toString() =>

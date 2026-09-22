@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/splash/splash_screen.dart';
 import 'theme.dart';
+import 'theme_mode.dart';
 
-/// Root widget: wires theme and the launch flow.
-class FoodBabaApp extends StatelessWidget {
+/// Root widget: wires the light/dark themes and the launch flow.
+class FoodBabaApp extends ConsumerWidget {
   const FoodBabaApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Food Baba',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: ref.watch(themeModeProvider),
       home: const SplashScreen(),
     );
   }
