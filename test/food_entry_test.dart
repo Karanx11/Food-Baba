@@ -39,7 +39,10 @@ void main() {
     });
 
     test('missing JSON fields default to zero', () {
-      expect(Nutrition.fromJson({'calories': 50}), const Nutrition(calories: 50));
+      expect(
+        Nutrition.fromJson({'calories': 50}),
+        const Nutrition(calories: 50),
+      );
     });
   });
 

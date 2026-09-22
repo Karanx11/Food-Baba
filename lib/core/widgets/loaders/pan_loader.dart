@@ -2,9 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../app/theme.dart';
+import '../surfaces.dart';
 
-/// Frying-pan loader: the pan hops, tosses a mint pancake that flips in the
+/// Frying-pan loader: the pan hops, tosses a pancake that flips in the
 /// air, and a soft shadow underneath shrinks as the pan lifts.
 class PanLoader extends StatefulWidget {
   const PanLoader({
@@ -39,13 +39,10 @@ class _PanLoaderState extends State<PanLoader>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final pan =
-        widget.panColor ?? (isDark ? const Color(0xFFEDEDED) : AppColors.ink);
-    final shadow =
-        widget.shadowColor ??
-        (isDark ? const Color(0xFF2A2A2E) : AppColors.stroke);
-    final accent = widget.accentColor ?? AppColors.mint;
+    final palette = AppPalette.of(context);
+    final pan = widget.panColor ?? palette.ink;
+    final shadow = widget.shadowColor ?? palette.track;
+    final accent = widget.accentColor ?? Theme.of(context).colorScheme.primary;
 
     return SizedBox.square(
       dimension: widget.size,

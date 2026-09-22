@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:food_baba/core/widgets/loaders/burger_loader.dart';
 import 'package:food_baba/core/widgets/loaders/pan_loader.dart';
 
-Widget _host(Widget child) => MaterialApp(home: Scaffold(body: Center(child: child)));
+Widget _host(Widget child) => MaterialApp(
+  home: Scaffold(body: Center(child: child)),
+);
 
 Future<void> _pumpFrames(WidgetTester tester, int count) async {
   for (var i = 0; i < count; i++) {

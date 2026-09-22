@@ -4,7 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme.dart';
 import '../../../core/dates.dart';
 import '../../../core/format.dart';
+import '../../../core/widgets/circle_icon_button.dart';
 import '../../../core/widgets/loaders/burger_loader.dart';
+import '../../../core/widgets/surfaces.dart';
+import '../../../core/widgets/top_bar.dart';
+import '../../food_search/presentation/food_search_page.dart';
 import '../../profile/application/profile_providers.dart';
 import '../../profile/domain/nutrition_targets.dart';
 import '../application/log_providers.dart';
@@ -40,8 +44,9 @@ class LogPage extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Food Log'),
+      appBar: appTopBar(
+        context,
+        title: 'Food Log',
         actions: [
           if (!isToday)
             TextButton(
@@ -113,22 +118,27 @@ class _DayNavigator extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: [
-          IconButton(
+          CircleIconButton(
+            icon: Icons.chevron_left_rounded,
             tooltip: 'Previous day',
+            size: 40,
             onPressed: onPrevious,
-            icon: const Icon(Icons.chevron_left_rounded),
           ),
           Expanded(
             child: TextButton.icon(
               onPressed: onPick,
               icon: const Icon(Icons.calendar_today_rounded, size: 18),
-              label: Text(label, style: Theme.of(context).textTheme.titleMedium),
+              label: Text(
+                label,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             ),
           ),
-          IconButton(
+          CircleIconButton(
+            icon: Icons.chevron_right_rounded,
             tooltip: 'Next day',
+            size: 40,
             onPressed: onNext,
-            icon: const Icon(Icons.chevron_right_rounded),
           ),
         ],
       ),
@@ -173,13 +183,17 @@ class _DayContentState extends ConsumerState<_DayContent> {
     repo.upsert(entry);
   }
 
+  /// Adding starts at food search; editing goes straight to the form.
   void _openForm(MealType meal, [FoodEntry? existing]) {
+    final dayKey = widget.log.dayKey;
     Navigator.of(context).push(
-      FoodEntryFormPage.route(
-        dayKey: widget.log.dayKey,
-        meal: meal,
-        existing: existing,
-      ),
+      existing == null
+          ? FoodSearchPage.route(dayKey: dayKey, meal: meal)
+          : FoodEntryFormPage.route(
+              dayKey: dayKey,
+              meal: meal,
+              existing: existing,
+            ),
     );
   }
 
@@ -195,7 +209,13 @@ class _DayContentState extends ConsumerState<_DayContent> {
     final repo = ref.watch(foodLogRepositoryProvider);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
+      // Clear the FAB and the floating navigation bar.
+      padding: EdgeInsets.fromLTRB(
+        16,
+        4,
+        16,
+        96 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
         _SummaryCard(totals: log.totals, targets: widget.targets),
         const SizedBox(height: 12),
@@ -233,7 +253,7 @@ class _SummaryCard extends StatelessWidget {
     final target = targets?.calories;
     final over = target != null && eaten > target;
 
-    return Card(
+    return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -330,8 +350,8 @@ class _MacroChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.14),
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.soft(color, Theme.of(context).brightness),
+          borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
           children: [
@@ -368,7 +388,7 @@ class _MealSection extends StatelessWidget {
   final ValueChanged<FoodEntry> onDelete;
 
   static String _describe(FoodEntry e) =>
-      '${compactNumber(e.servings)} × ${e.servingLabel} · '
+      '${compactNumber(e.servings, decimals: 2)} × ${e.servingLabel} · '
       'P ${compactNumber(e.total.proteinG)} · '
       'C ${compactNumber(e.total.carbsG)} · '
       'F ${compactNumber(e.total.fatG)} g';
@@ -377,13 +397,12 @@ class _MealSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    return Card(
-      clipBehavior: Clip.antiAlias,
+    return AppCard(
       child: Column(
         children: [
           ListTile(
             leading: CircleAvatar(
-              backgroundColor: scheme.primary.withValues(alpha: 0.12),
+              backgroundColor: AppPalette.of(context).cardMuted,
               child: Icon(meal.icon, color: scheme.primary),
             ),
             title: Text(
@@ -411,7 +430,10 @@ class _MealSection extends StatelessWidget {
                 color: scheme.error,
                 alignment: Alignment.centerRight,
                 padding: const EdgeInsets.only(right: 20),
-                child: Icon(Icons.delete_outline_rounded, color: scheme.onError),
+                child: Icon(
+                  Icons.delete_outline_rounded,
+                  color: scheme.onError,
+                ),
               ),
               onDismissed: (_) => onDelete(entry),
               child: ListTile(
@@ -433,7 +455,7 @@ class _MealSection extends StatelessWidget {
 class _WaterCard extends StatelessWidget {
   const _WaterCard({required this.glasses, required this.onChanged});
 
-  static const Color _blue = Color(0xFF4FC3F7);
+  static const Color _blue = AppColors.water;
 
   final int glasses;
   final ValueChanged<int> onChanged;
@@ -442,7 +464,7 @@ class _WaterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    return Card(
+    return AppCard(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

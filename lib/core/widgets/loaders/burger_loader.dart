@@ -2,9 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../app/theme.dart';
+import '../surfaces.dart';
 
-/// Single-stroke burger outline with a mint highlight that travels along it.
+/// Single-stroke burger outline with a highlight that travels along it.
 ///
 /// Leave [progress] null for the indeterminate travelling highlight. Pass a
 /// value in 0..1 to fill the stroke from the start up to that fraction.
@@ -57,11 +57,8 @@ class _BurgerLoaderState extends State<BurgerLoader>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final stroke =
-        widget.strokeColor ??
-        (isDark ? const Color(0xFF3A3A3E) : AppColors.stroke);
-    final accent = widget.accentColor ?? AppColors.mint;
+    final stroke = widget.strokeColor ?? AppPalette.of(context).track;
+    final accent = widget.accentColor ?? Theme.of(context).colorScheme.primary;
 
     return SizedBox.square(
       dimension: widget.size,

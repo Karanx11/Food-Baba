@@ -1,153 +1,168 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/home/presentation/calorie_ring.dart';
-import 'package:food_baba/features/home/presentation/home_page.dart';
-import 'package:food_baba/features/log/application/log_providers.dart';
+import 'package:food_baba/core/widgets/loaders/burger_loader.dart';
+import 'package:food_baba/features/food_search/presentation/food_search_page.dart';
+import 'package:food_baba/features/insights/presentation/daily_breakdown_page.dart';
 import 'package:food_baba/features/log/domain/food_entry.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
-import 'package:food_baba/features/log/presentation/food_entry_form_page.dart';
 import 'package:food_baba/features/profile/data/profile_repository.dart';
-import 'package:food_baba/features/profile/domain/user_profile.dart';
 import 'package:food_baba/features/profile/presentation/profile_form_page.dart';
 import 'package:food_baba/features/shell/home_shell.dart';
 
+import 'helpers/fixtures.dart';
 import 'helpers/test_app.dart';
 
-/// Asha: male, 30, 175 cm, 70 kg, moderately active, maintain -> 2556 kcal.
-const _asha = UserProfile(
-  name: 'Asha',
-  sex: Sex.male,
-  age: 30,
-  heightCm: 175,
-  weightKg: 70,
-  activity: ActivityLevel.moderate,
-  goal: Goal.maintain,
-);
-
-Future<void> _pumpHome(
-  WidgetTester tester, {
-  UserProfile? profile,
-  List<FoodEntry> entries = const [],
-}) async {
-  tester.view.physicalSize = const Size(800, 1600);
-  tester.view.devicePixelRatio = 1.0;
-  addTearDown(tester.view.reset);
-
-  await tester.pumpWidget(
-    testApp(
-      home: const HomeShell(),
-      repository: InMemoryProfileRepository(profile),
-    ),
-  );
-  await tester.pumpAndSettle();
-
-  if (entries.isNotEmpty) {
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(HomePage)),
-    );
-    final repo = container.read(foodLogRepositoryProvider);
-    for (final e in entries) {
-      await repo.upsert(e);
-    }
-    await tester.pumpAndSettle();
-  }
-}
-
-FoodEntry _lunch(String name, double calories, {double protein = 0}) =>
-    FoodEntry(
-      id: name,
-      dayKey: '2026-09-22',
-      meal: MealType.lunch,
-      name: name,
-      perServing: Nutrition(calories: calories, proteinG: protein),
-      createdAt: testNow,
-    );
-
 void main() {
-  testWidgets('without a profile: greeting, nudge, and eaten-only ring', (
+  testWidgets('without a profile: header, week strip, nudge and zero goal', (
     tester,
   ) async {
-    await _pumpHome(tester);
+    await pumpHome(tester);
 
-    expect(find.text('Good afternoon'), findsOneWidget); // 1 pm
-    expect(find.text('Tue, 22 Sep'), findsOneWidget);
+    expect(find.text('Welcome Back 👋'), findsOneWidget);
+    expect(find.text('Stay On Track Today'), findsOneWidget);
+    for (var d = 19; d <= 25; d++) {
+      expect(find.byKey(ValueKey('day-2026-09-$d')), findsOneWidget);
+    }
     expect(find.text('Set your daily targets'), findsOneWidget);
-    expect(find.byType(CalorieRing), findsOneWidget);
+    expect(find.text("Today's Goal"), findsOneWidget);
+    expect(find.text('0'), findsOneWidget);
     expect(find.text('kcal eaten'), findsOneWidget);
-    expect(find.text('0 g'), findsNWidgets(3)); // macro rows, no targets
-    expect(find.text('Nothing yet'), findsNWidgets(4));
+    expect(find.text('0g'), findsNWidgets(3));
+    expect(find.text("Today's Meals"), findsOneWidget);
+    expect(find.text('No food yet'), findsNWidgets(4));
 
     await tester.tap(find.text('Set up profile'));
     await tester.pumpAndSettle();
     expect(find.byType(ProfileFormPage), findsOneWidget);
   });
 
-  testWidgets('with a profile and food: remaining, macros and meals', (
+  testWidgets('with a profile and food: goal, macros left and meal cards', (
     tester,
   ) async {
-    await _pumpHome(
+    await pumpHome(
       tester,
-      profile: _asha,
-      entries: [_lunch('Dal tadka', 180, protein: 9)],
+      profile: asha,
+      entries: [entry('Dal tadka', 180, protein: 9)],
     );
 
-    expect(find.text('Good afternoon, Asha'), findsOneWidget);
+    expect(find.text('Welcome back, Asha 👋'), findsOneWidget);
     expect(find.text('Set your daily targets'), findsNothing);
-
-    // Ring centre and stats.
-    expect(find.text('2376'), findsOneWidget); // 2556 - 180
-    expect(find.text('kcal left'), findsOneWidget);
-    expect(find.text('2556 kcal'), findsOneWidget);
-    expect(find.text('2376 kcal'), findsOneWidget);
-
-    // Macro bars against targets.
-    expect(find.text('9 / 112 g'), findsOneWidget);
-    expect(find.text('0 / 367 g'), findsOneWidget);
-    expect(find.text('0 / 71 g'), findsOneWidget);
-
-    // Meals card lists the lunch item with its calories.
-    expect(find.text('Dal tadka'), findsOneWidget);
-    expect(find.text('Nothing yet'), findsNWidgets(3));
+    expect(find.text('180 / 2556'), findsOneWidget);
+    expect(find.text('2376 kcal left'), findsOneWidget);
+    expect(find.text('103g'), findsOneWidget);
+    expect(find.text('Protein left'), findsOneWidget);
+    expect(find.text('367g'), findsOneWidget);
+    expect(find.text('Carbs left'), findsOneWidget);
+    expect(find.text('71g'), findsOneWidget);
+    expect(find.text('Fat left'), findsOneWidget);
+    expect(find.text('180 Kcal'), findsOneWidget);
+    expect(find.text('🍛'), findsOneWidget); // dal thumbnail
+    expect(find.text('No food yet'), findsNWidgets(3));
   });
 
-  testWidgets('going over the target flips the ring to "over"', (
-    tester,
-  ) async {
-    await _pumpHome(tester, profile: _asha, entries: [_lunch('Feast', 3000)]);
+  testWidgets('going over shows kcal over and macros over', (tester) async {
+    await pumpHome(
+      tester,
+      profile: asha,
+      entries: [entry('Feast', 3000, protein: 150)],
+    );
 
-    expect(find.text('444'), findsOneWidget); // 3000 - 2556
-    expect(find.text('kcal over'), findsOneWidget);
-    expect(find.text('Over'), findsOneWidget);
-    expect(find.text('444 kcal'), findsOneWidget);
+    expect(find.text('3000 / 2556'), findsOneWidget);
+    expect(find.text('444 kcal over'), findsOneWidget);
+    expect(find.text('38g'), findsOneWidget);
+    expect(find.text('Protein over'), findsOneWidget);
   });
 
-  testWidgets('quick actions: add to a meal, water, and see full log', (
+  testWidgets('week strip marks days and selects past days only', (
     tester,
   ) async {
-    await _pumpHome(tester, profile: _asha);
+    await pumpHome(
+      tester,
+      profile: asha,
+      entries: [
+        entry('Poha', 250, meal: MealType.breakfast, day: '2026-09-20'),
+        entry('Dal tadka', 180),
+      ],
+    );
+
+    expect(find.byKey(const ValueKey('logged-2026-09-20')), findsOneWidget);
+    expect(find.byKey(const ValueKey('logged-2026-09-22')), findsOneWidget);
+    expect(find.byKey(const ValueKey('logged-2026-09-21')), findsNothing);
+    // Past days without food get a dashed ring; today and the future don't.
+    expect(find.byKey(const ValueKey('missed-2026-09-21')), findsOneWidget);
+    expect(find.byKey(const ValueKey('missed-2026-09-22')), findsNothing);
+    expect(find.byKey(const ValueKey('missed-2026-09-23')), findsNothing);
+
+    // Future days can't be selected.
+    await tester.tap(find.byKey(const ValueKey('day-2026-09-23')));
+    await tester.pumpAndSettle();
+    expect(find.text("Today's Meals"), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('day-2026-09-20')));
+    await tester.pumpAndSettle();
+    expect(find.text('Meals on Sun, 20 Sep'), findsOneWidget);
+    expect(find.text('Daily Goal'), findsOneWidget);
+    expect(find.text('250 / 2556'), findsOneWidget);
+    expect(find.text('250 Kcal'), findsOneWidget);
+
+    // The log follows the same selected day.
+    await tester.tap(find.byTooltip('Food log'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Sun, 20 Sep'), findsOneWidget);
+  });
+
+  testWidgets('quick actions open search, log, breakdown and profile', (
+    tester,
+  ) async {
+    await pumpHome(tester, profile: asha, entries: [entry('Dal tadka', 180)]);
 
     await tester.tap(find.byKey(const Key('home-add-dinner')));
     await tester.pumpAndSettle();
-    expect(find.byType(FoodEntryFormPage), findsOneWidget);
+    expect(find.byType(FoodSearchPage), findsOneWidget);
     expect(find.text('Add to Dinner'), findsOneWidget);
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('home-water-plus')));
-    await tester.pumpAndSettle();
-    expect(find.text('1 of 8 glasses · 250 ml'), findsOneWidget);
-
-    await tester.tap(find.text('See full log'));
+    await tester.tap(find.byKey(const ValueKey('meal-card-lunch')));
     await tester.pumpAndSettle();
     expect(find.text('Food Log'), findsOneWidget);
-    // The same water count shows on the Log tab.
-    expect(find.text('1 of 8 glasses · 250 ml'), findsOneWidget);
+    await tester.tap(find.byTooltip('Home'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('today-goal-card')));
+    await tester.pumpAndSettle();
+    expect(find.byType(DailyBreakdownPage), findsOneWidget);
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Open profile'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your Profile'), findsOneWidget);
+    await tester.tap(find.byTooltip('Home'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Reminders'));
+    await tester.pump();
+    expect(find.text('Reminders arrive in a later step.'), findsOneWidget);
   });
 
-  test('greeting follows the hour', () {
-    expect(HomePage.greetingFor(7), 'Good morning');
-    expect(HomePage.greetingFor(13), 'Good afternoon');
-    expect(HomePage.greetingFor(20), 'Good evening');
+  testWidgets('shows a loader, not zeros, until the day has loaded', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      testApp(
+        home: const HomeShell(),
+        repository: InMemoryProfileRepository(asha),
+      ),
+    );
+    expect(find.byType(BurgerLoader), findsOneWidget);
+    expect(find.text('No food yet'), findsNothing);
+
+    await tester.pumpAndSettle();
+    expect(find.byType(BurgerLoader), findsNothing);
+    expect(find.text('No food yet'), findsNWidgets(4));
   });
 }

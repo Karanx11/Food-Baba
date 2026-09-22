@@ -92,6 +92,26 @@ void main() {
     test('JSON round trip preserves every field', () {
       final withName = base.copyWith(name: 'Asha', weightKg: 72.5);
       expect(UserProfile.fromJson(withName.toJson()), withName);
+
+      final withGoal = withName.copyWith(goalWeightKg: 65.0, goalStartKg: 72.5);
+      expect(UserProfile.fromJson(withGoal.toJson()), withGoal);
+    });
+
+    test('profiles saved before goal weights existed still load', () {
+      final legacy = base.toJson()
+        ..remove('goalWeightKg')
+        ..remove('goalStartKg');
+      final loaded = UserProfile.fromJson(legacy);
+      expect(loaded.goalWeightKg, isNull);
+      expect(loaded.goalStartKg, isNull);
+    });
+
+    test('copyWith can clear the goal and keeps it when not mentioned', () {
+      final withGoal = base.copyWith(goalWeightKg: 65.0, goalStartKg: 70.0);
+      expect(withGoal.copyWith(age: 40).goalWeightKg, 65);
+      final cleared = withGoal.copyWith(goalWeightKg: null, goalStartKg: null);
+      expect(cleared.goalWeightKg, isNull);
+      expect(cleared.goalStartKg, isNull);
     });
 
     test('copyWith only changes the given fields', () {

@@ -13,8 +13,13 @@ Flutter app (Android, iOS, web) with a Node/Express backend planned for AI visio
 | 3 | Loading animations: single-stroke burger loader (splash) and hopping-pan loader (Snap preview sheet) | analyze, widget tests, screenshots |
 | 4 | Profile (sex, age, height, weight, activity, goal) with Mifflin-St Jeor calorie and macro targets, saved locally via shared_preferences, state via Riverpod | analyze, 23 unit + widget tests, screenshots incl. reload persistence |
 | 5 | Food log: day picker, calories/macros vs targets, Breakfast/Lunch/Dinner/Snacks with add, edit, swipe-to-delete + undo, recent foods to re-log, water tracking. Local document DB (sembast: files on mobile, IndexedDB on web) | analyze, 46 tests, browser walkthrough |
+| 6 | Home dashboard: greeting, calorie ring (left/over), macro bars vs targets, today's meals with quick add, water shortcut, profile set-up prompt | analyze, 5 widget tests, browser light + dark |
+| 7 | Food search: bundled database of 75 common foods (Indian staples first) with Hindi aliases, ranked search, portion screen with serving sizes and a quantity slider, recent foods, custom-food fallback | analyze, 70 tests incl. a data plausibility check, browser walkthrough |
+| 8 | Glassmorphic UI (frosted cards, floating glass nav). Replaced by step 9 at the user's request | analyze, tests, browser light + dark |
+| 9 | Lavender redesign from the user's reference: soft grey page with a lavender glow, white rounded cards, violet accent, black pill buttons, round floating nav with Snap in the middle. Home (week strip, Today's Goal gauge with macros left, meal cards with thumbnails), Daily Breakdown (270° calorie gauge, macro pills, water, health score), Goal Progress (goal and current weight, weight trend chart, BMI bar). Adds weight history and goal weight | analyze, 108 tests, browser light + dark |
+| 10 | Light/dark mode button in the Home header (moon / sun). Follows the device until tapped; the choice is saved and loaded before the first frame | analyze, 114 tests, browser incl. reload |
 
-Next up: home dashboard, capture flow, analytics.
+Next up: barcode scan (Open Food Facts), then camera capture with AI vision via the backend, then analytics and streaks.
 
 ## Project layout
 
@@ -23,7 +28,8 @@ lib/
   main.dart                 entry point
   app/                      FoodBabaApp + theme
   core/                     dates, number formatting, local DB wiring (sembast)
-  core/widgets/             shared widgets (placeholder page, loaders, number field)
+  core/widgets/             shared widgets (palette, background, cards, round buttons, top bar,
+                            gauges, water fill, loaders, number field)
   features/
     splash/                 launch screen
     shell/                  bottom navigation + Snap action
@@ -31,7 +37,12 @@ lib/
                             application (Riverpod providers), presentation (pages)
     log/                    domain (nutrition, food entry, daily log), data (sembast
                             repository), application (providers), presentation (log page, form)
-    home/ analyze/          placeholders for now
+    food_search/            domain (food item, ranked search), data (bundled catalog),
+                            presentation (search page, portion page, portion selector)
+    home/                   week strip, Today's Goal card, meal cards
+    insights/               health score and the Daily Breakdown page
+    progress/               weight history, BMI and goal progress, Goal Progress page
+assets/foods/               bundled food database (approximate values per 100 g)
 test/                       unit + widget tests (helpers/test_app.dart wires an in-memory store)
 .claude/                    dev tooling (web preview server + launch config)
 ```

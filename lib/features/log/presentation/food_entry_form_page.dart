@@ -4,32 +4,53 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/format.dart';
+import '../../../core/widgets/circle_icon_button.dart';
 import '../../../core/widgets/number_field.dart';
+import '../../../core/widgets/surfaces.dart';
+import '../../../core/widgets/top_bar.dart';
 import '../application/log_providers.dart';
 import '../domain/food_entry.dart';
 import '../domain/nutrition.dart';
 import 'meal_type_ui.dart';
 
-/// Add a food to a meal, or edit an existing entry.
+/// Add a food by hand, or edit an existing entry. Pops `true` after a save or
+/// delete.
 class FoodEntryFormPage extends ConsumerStatefulWidget {
   const FoodEntryFormPage({
     super.key,
     required this.dayKey,
     required this.meal,
     this.existing,
+    this.template,
+    this.initialName,
   });
 
   final String dayKey;
   final MealType meal;
+
+  /// Entry being edited. Null when adding.
   final FoodEntry? existing;
 
-  static Route<void> route({
+  /// Earlier entry whose values pre-fill a new one, e.g. a recent food.
+  final FoodEntry? template;
+
+  /// Pre-filled food name for a new entry, e.g. an unmatched search.
+  final String? initialName;
+
+  static Route<bool> route({
     required String dayKey,
     required MealType meal,
     FoodEntry? existing,
-  }) => MaterialPageRoute<void>(
-    builder: (_) =>
-        FoodEntryFormPage(dayKey: dayKey, meal: meal, existing: existing),
+    FoodEntry? template,
+    String? initialName,
+  }) => MaterialPageRoute<bool>(
+    builder: (_) => FoodEntryFormPage(
+      dayKey: dayKey,
+      meal: meal,
+      existing: existing,
+      template: template,
+      initialName: initialName,
+    ),
   );
 
   @override
@@ -39,29 +60,34 @@ class FoodEntryFormPage extends ConsumerStatefulWidget {
 class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  late final _name = TextEditingController(text: widget.existing?.name ?? '');
+  FoodEntry? get _seed => widget.existing ?? widget.template;
+
+  late final _name = TextEditingController(
+    text: _seed?.name ?? widget.initialName ?? '',
+  );
   late final _servingLabel = TextEditingController(
-    text: widget.existing?.servingLabel ?? '1 serving',
+    text: _seed?.servingLabel ?? '1 serving',
   );
   late final _servings = TextEditingController(
-    text: _numberText(widget.existing?.servings ?? 1),
+    text: compactNumber(_seed?.servings ?? 1, decimals: 2),
   );
   late final _calories = TextEditingController(
-    text: _numberText(widget.existing?.perServing.calories),
+    text: _numberText(_seed?.perServing.calories),
   );
   late final _protein = TextEditingController(
-    text: _numberText(widget.existing?.perServing.proteinG),
+    text: _numberText(_seed?.perServing.proteinG),
   );
   late final _carbs = TextEditingController(
-    text: _numberText(widget.existing?.perServing.carbsG),
+    text: _numberText(_seed?.perServing.carbsG),
   );
   late final _fat = TextEditingController(
-    text: _numberText(widget.existing?.perServing.fatG),
+    text: _numberText(_seed?.perServing.fatG),
   );
   late MealType _meal = widget.existing?.meal ?? widget.meal;
   bool _saving = false;
 
-  static String _numberText(double? v) => v == null ? '' : compactNumber(v);
+  static String _numberText(double? v) =>
+      v == null ? '' : compactNumber(v, decimals: 2);
 
   @override
   void dispose() {
@@ -79,8 +105,7 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
     super.dispose();
   }
 
-  double _num(TextEditingController c) =>
-      double.tryParse(c.text.trim()) ?? 0;
+  double _num(TextEditingController c) => double.tryParse(c.text.trim()) ?? 0;
 
   Nutrition get _perServing => Nutrition(
     calories: _num(_calories),
@@ -95,11 +120,11 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
     setState(() {
       _name.text = e.name;
       _servingLabel.text = e.servingLabel;
-      _servings.text = compactNumber(e.servings);
-      _calories.text = compactNumber(e.perServing.calories);
-      _protein.text = compactNumber(e.perServing.proteinG);
-      _carbs.text = compactNumber(e.perServing.carbsG);
-      _fat.text = compactNumber(e.perServing.fatG);
+      _servings.text = compactNumber(e.servings, decimals: 2);
+      _calories.text = _numberText(e.perServing.calories);
+      _protein.text = _numberText(e.perServing.proteinG);
+      _carbs.text = _numberText(e.perServing.carbsG);
+      _fat.text = _numberText(e.perServing.fatG);
     });
   }
 
@@ -116,7 +141,7 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
       servingLabel: label.isEmpty ? '1 serving' : label,
       servings: _servingCount,
       perServing: _perServing,
-      source: existing?.source ?? FoodSource.manual,
+      source: existing?.source ?? widget.template?.source ?? FoodSource.manual,
       createdAt: existing?.createdAt ?? now,
     );
 
@@ -124,13 +149,12 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
     try {
       await ref.read(foodLogRepositoryProvider).upsert(entry);
       if (!mounted) return;
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } on Object catch (error) {
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not save: $error')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Could not save: $error')));
     }
   }
 
@@ -159,7 +183,7 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
     if (!confirmed || !mounted) return;
     await ref.read(foodLogRepositoryProvider).delete(existing.id);
     if (!mounted) return;
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
   }
 
   @override
@@ -171,13 +195,15 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
     final servingText = _servingLabel.text.trim();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEdit ? 'Edit food' : 'Add food'),
+      appBar: appTopBar(
+        context,
+        title: isEdit ? 'Edit food' : 'Add food',
         actions: [
           if (isEdit)
-            IconButton(
+            CircleIconButton(
+              icon: Icons.delete_outline_rounded,
               tooltip: 'Delete',
-              icon: const Icon(Icons.delete_outline_rounded),
+              size: 42,
               onPressed: _delete,
             ),
         ],
@@ -199,7 +225,6 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
                 decoration: const InputDecoration(
                   labelText: 'Food name',
                   hintText: 'e.g. Dal tadka',
-                  border: OutlineInputBorder(),
                 ),
                 validator: (v) =>
                     (v ?? '').trim().isEmpty ? 'Give it a name' : null,
@@ -207,17 +232,9 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
               const SizedBox(height: 16),
               Text('Meal', style: text.titleSmall),
               const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  for (final meal in MealType.values)
-                    ChoiceChip(
-                      avatar: Icon(meal.icon, size: 18),
-                      label: Text(meal.label),
-                      selected: meal == _meal,
-                      onSelected: (_) => setState(() => _meal = meal),
-                    ),
-                ],
+              MealChips(
+                selected: _meal,
+                onSelected: (m) => setState(() => _meal = m),
               ),
               const SizedBox(height: 16),
               Row(
@@ -230,7 +247,6 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
                       decoration: const InputDecoration(
                         labelText: 'Serving size',
                         hintText: '1 cup, 100 g, 1 roti',
-                        border: OutlineInputBorder(),
                       ),
                     ),
                   ),
@@ -297,7 +313,7 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
                 ],
               ),
               const SizedBox(height: 24),
-              Card(
+              AppCard(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
@@ -309,7 +325,8 @@ class _FoodEntryFormPageState extends ConsumerState<FoodEntryFormPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Total for ${compactNumber(_servingCount)} × '
+                              'Total for '
+                              '${compactNumber(_servingCount, decimals: 2)} × '
                               '${servingText.isEmpty ? 'serving' : servingText}',
                               style: text.labelMedium?.copyWith(
                                 color: scheme.outline,

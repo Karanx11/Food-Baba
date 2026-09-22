@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/format.dart';
+import '../../../core/widgets/circle_icon_button.dart';
 import '../../../core/widgets/loaders/burger_loader.dart';
+import '../../../core/widgets/surfaces.dart';
+import '../../../core/widgets/top_bar.dart';
 import '../application/profile_providers.dart';
 import '../domain/nutrition_targets.dart';
 import '../domain/user_profile.dart';
@@ -19,16 +22,18 @@ class ProfilePage extends ConsumerWidget {
     final profile = async.value;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Profile'),
+      appBar: appTopBar(
+        context,
+        title: 'Your Profile',
         actions: [
           if (profile != null)
-            IconButton(
+            CircleIconButton(
+              icon: Icons.edit_outlined,
               tooltip: 'Edit profile',
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: () => Navigator.of(
-                context,
-              ).push(ProfileFormPage.route(initial: profile)),
+              size: 42,
+              onPressed: () =>
+                  Navigator.of(context)
+                      .push(ProfileFormPage.route(initial: profile)),
             ),
         ],
       ),
@@ -99,9 +104,15 @@ class _ProfileSummary extends StatelessWidget {
     final name = profile.name.isEmpty ? 'Your profile' : profile.name;
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      // Clear the FAB and the floating navigation bar.
+      padding: EdgeInsets.fromLTRB(
+        16,
+        16,
+        16,
+        96 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
-        Card(
+        AppCard(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Row(
@@ -163,9 +174,9 @@ class _ProfileSummary extends StatelessWidget {
         TargetsCard(targets: targets),
         const SizedBox(height: 16),
         OutlinedButton.icon(
-          onPressed: () => Navigator.of(
-            context,
-          ).push(ProfileFormPage.route(initial: profile)),
+          onPressed: () =>
+              Navigator.of(context)
+                  .push(ProfileFormPage.route(initial: profile)),
           icon: const Icon(Icons.edit_outlined),
           label: const Text('Edit profile'),
         ),

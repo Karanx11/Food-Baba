@@ -34,9 +34,9 @@ void main() {
 
   test('watchDay starts empty and reflects upserts and deletes', () async {
     final seen = <List<String>>[];
-    final sub = repo.watchDay('2026-09-22').listen(
-      (entries) => seen.add(entries.map((e) => e.name).toList()),
-    );
+    final sub = repo
+        .watchDay('2026-09-22')
+        .listen((entries) => seen.add(entries.map((e) => e.name).toList()));
 
     await repo.upsert(_entry('1', 'Dal', at: DateTime(2026, 9, 22, 13)));
     await repo.upsert(_entry('2', 'Rice', at: DateTime(2026, 9, 22, 13, 1)));

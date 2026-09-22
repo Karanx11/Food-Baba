@@ -1,70 +1,204 @@
 import 'package:flutter/material.dart';
 
-/// Brand palette for Food Baba.
-///
-/// Mint accent and charcoal ink on a warm off-white canvas, matching the
-/// line-art loader reference (grey stroke that fills to mint green).
-abstract final class AppColors {
-  static const Color mint = Color(0xFF2FE3A0);
-  static const Color mintDark = Color(0xFF17B97D);
-  static const Color ink = Color(0xFF2B2B2B);
-  static const Color canvas = Color(0xFFFDF9FB);
-  static const Color canvasDark = Color(0xFF121214);
-  static const Color stroke = Color(0xFFE3E3E3);
+import '../core/widgets/surfaces.dart';
 
-  // Macro colours, shared by target cards, rings and charts.
-  static const Color protein = Color(0xFF17B97D);
-  static const Color carbs = Color(0xFFF5A623);
-  static const Color fat = Color(0xFFFF6B6B);
+/// Accent and data colours. Neutral surfaces and inks are in [AppPalette].
+abstract final class AppColors {
+  static const Color violet = Color(0xFF9B72F2);
+  static const Color violetLight = Color(0xFFB79CFF);
+
+  // Macros, shared by gauges, pills and charts.
+  static const Color protein = Color(0xFFF4A25B);
+  static const Color carbs = Color(0xFFA47DF4);
+  static const Color fat = Color(0xFF4CC58A);
+
+  static const Color flame = Color(0xFFFF7A2F);
+  static const Color water = Color(0xFF8E6CF0);
+  static const Color success = Color(0xFF34C77B);
+  static const Color danger = Color(0xFFE5484D);
+
+  // BMI scale.
+  static const Color underweight = Color(0xFF4C8DF6);
+  static const Color overweight = Color(0xFFF59E0B);
+  static const Color obese = Color(0xFFDC2626);
+
+  /// Pale fill behind a coloured value, e.g. macro pills.
+  static Color soft(Color color, Brightness brightness) =>
+      color.withValues(alpha: brightness == Brightness.dark ? 0.2 : 0.14);
 }
 
 abstract final class AppTheme {
-  static ThemeData light() {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.mint,
+  static ThemeData light() => _base(
+    ColorScheme.fromSeed(
+      seedColor: AppColors.violet,
       brightness: Brightness.light,
-      primary: AppColors.mintDark,
-      surface: AppColors.canvas,
-    );
-    return _base(scheme).copyWith(scaffoldBackgroundColor: AppColors.canvas);
-  }
+      primary: AppColors.violet,
+      surface: AppPalette.light.card,
+    ),
+  );
 
-  static ThemeData dark() {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.mint,
+  static ThemeData dark() => _base(
+    ColorScheme.fromSeed(
+      seedColor: AppColors.violet,
       brightness: Brightness.dark,
-      primary: AppColors.mint,
-      surface: AppColors.canvasDark,
-    );
-    return _base(
-      scheme,
-    ).copyWith(scaffoldBackgroundColor: AppColors.canvasDark);
-  }
+      primary: AppColors.violetLight,
+      surface: AppPalette.dark.card,
+    ),
+  );
 
   static ThemeData _base(ColorScheme scheme) {
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: scheme,
+    final p = AppPalette.forBrightness(scheme.brightness);
+    final selectedFill = AppColors.soft(scheme.primary, scheme.brightness);
+    final base = ThemeData(useMaterial3: true, colorScheme: scheme);
+    final text = base.textTheme.apply(bodyColor: p.ink, displayColor: p.ink);
+
+    OutlineInputBorder outline(Color color, [double width = 1]) =>
+        OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(16)),
+          borderSide: BorderSide(color: color, width: width),
+        );
+    const rounded28 = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(28)),
+    );
+
+    return base.copyWith(
+      // Pages are transparent; each route paints the app background.
+      scaffoldBackgroundColor: Colors.transparent,
+      pageTransitionsTheme: appPageTransitionsTheme,
+      textTheme: text.copyWith(
+        headlineSmall: text.headlineSmall?.copyWith(
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.6,
+        ),
+        titleLarge: text.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+        titleMedium: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        titleSmall: text.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+      ),
+      iconTheme: IconThemeData(color: p.ink),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        centerTitle: false,
-        foregroundColor: scheme.onSurface,
+        centerTitle: true,
+        foregroundColor: p.ink,
         titleTextStyle: TextStyle(
-          color: scheme.onSurface,
-          fontSize: 22,
+          color: p.ink,
+          fontSize: 18,
           fontWeight: FontWeight.w700,
         ),
       ),
-      navigationBarTheme: NavigationBarThemeData(
-        indicatorColor: scheme.primary.withValues(alpha: 0.18),
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      // Primary actions are black pills, as in the design.
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: p.ink,
+          foregroundColor: p.onInk,
+          shape: const StadiumBorder(),
+          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: p.ink,
+          backgroundColor: p.card,
+          side: BorderSide(color: p.border),
+          shape: const StadiumBorder(),
+          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: scheme.primary,
+          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: p.card,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(22)),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: p.card,
+        border: outline(p.border),
+        enabledBorder: outline(p.border),
+        focusedBorder: outline(scheme.primary, 1.6),
+        errorBorder: outline(scheme.error),
+        focusedErrorBorder: outline(scheme.error, 1.6),
+        disabledBorder: outline(p.border.withValues(alpha: 0.5)),
+      ),
+      chipTheme: ChipThemeData(
+        color: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? selectedFill : p.card,
+        ),
+        side: BorderSide(color: p.border),
+        shape: const StadiumBorder(),
+        checkmarkColor: scheme.primary,
+        labelStyle: TextStyle(color: p.ink, fontWeight: FontWeight.w500),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.selected) ? selectedFill : p.card,
+          ),
+          side: WidgetStatePropertyAll(BorderSide(color: p.border)),
+        ),
+      ),
+      sliderTheme: SliderThemeData(
+        activeTrackColor: scheme.primary,
+        inactiveTrackColor: p.track,
+        thumbColor: scheme.primary,
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: scheme.primary,
+        linearTrackColor: p.track,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: p.card,
+        surfaceTintColor: Colors.transparent,
+        shape: rounded28,
+      ),
+      datePickerTheme: DatePickerThemeData(
+        backgroundColor: p.card,
+        surfaceTintColor: Colors.transparent,
+        shape: rounded28,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: p.card,
+        modalBackgroundColor: p.card,
+        surfaceTintColor: Colors.transparent,
+        showDragHandle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+      ),
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: WidgetStatePropertyAll(p.card),
+          surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+          shape: const WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+            ),
+          ),
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: p.ink,
+        contentTextStyle: TextStyle(color: p.onInk),
+        actionTextColor: scheme.brightness == Brightness.dark
+            ? AppColors.violet
+            : AppColors.violetLight,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+      ),
+      dividerTheme: DividerThemeData(color: p.divider, space: 1),
+      listTileTheme: ListTileThemeData(iconColor: p.muted),
     );
   }
 }
