@@ -1,0 +1,20 @@
+{
+  "name": "food-baba-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Food Baba API: analyzes food photos with a vision model, keeping the API key server-side.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^18.0.2",
+    "express": "^4.21.2"
+  }
+}

@@ -4,6 +4,9 @@ import 'package:food_baba/app/app.dart';
 import 'package:food_baba/app/theme.dart';
 import 'package:food_baba/app/theme_mode.dart';
 import 'package:food_baba/core/db/app_database.dart';
+import 'package:food_baba/features/capture/application/capture_providers.dart';
+import 'package:food_baba/features/capture/data/photo_source.dart';
+import 'package:food_baba/features/capture/domain/food_analyzer.dart';
 import 'package:food_baba/features/food_search/application/catalog_providers.dart';
 import 'package:food_baba/features/food_search/data/food_catalog_repository.dart';
 import 'package:food_baba/features/food_search/domain/food_item.dart';
@@ -71,6 +74,8 @@ Widget testApp({
   List<FoodItem> catalog = testCatalog,
   ThemeModeStore? themeStore,
   ThemeMode initialThemeMode = ThemeMode.system,
+  PhotoSource? photoSource,
+  FoodAnalyzer? foodAnalyzer,
 }) {
   return ProviderScope(
     overrides: [
@@ -86,6 +91,10 @@ Widget testApp({
         themeStore ?? InMemoryThemeModeStore(),
       ),
       initialThemeModeProvider.overrideWithValue(initialThemeMode),
+      if (photoSource != null)
+        photoSourceProvider.overrideWithValue(photoSource),
+      if (foodAnalyzer != null)
+        foodAnalyzerProvider.overrideWithValue(foodAnalyzer),
     ],
     child: home == null ? const FoodBabaApp() : _TestApp(home: home),
   );
