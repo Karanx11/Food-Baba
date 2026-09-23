@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/widgets/circle_icon_button.dart';
-import '../../core/widgets/loaders/pan_loader.dart';
 import '../../core/widgets/surfaces.dart';
+import '../capture/presentation/capture_flow.dart';
 import '../home/presentation/home_page.dart';
 import '../log/presentation/log_page.dart';
 import '../profile/presentation/profile_page.dart';
@@ -22,11 +22,6 @@ class HomeShell extends ConsumerWidget {
     ProfilePage(),
   ];
 
-  static void _openSnap(BuildContext context) => showModalBottomSheet<void>(
-    context: context,
-    builder: (_) => const _SnapPreviewSheet(),
-  );
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final index = ref.watch(shellTabProvider);
@@ -37,7 +32,7 @@ class HomeShell extends ConsumerWidget {
       bottomNavigationBar: _BottomNav(
         index: index,
         onTab: ref.read(shellTabProvider.notifier).select,
-        onSnap: () => _openSnap(context),
+        onSnap: () => CaptureFlow.start(context, ref),
       ),
     );
   }
@@ -105,46 +100,6 @@ class _BottomNav extends StatelessWidget {
             Icons.person_rounded,
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Stand-in for the capture flow: previews the "analyzing" state.
-class _SnapPreviewSheet extends StatelessWidget {
-  const _SnapPreviewSheet();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-    final text = Theme.of(context).textTheme;
-    // Sheets get loose width constraints; fill the width like a real sheet.
-    return SizedBox(
-      width: double.infinity,
-      child: SafeArea(
-        top: false,
-        // Scrollable so the sheet never overflows on short screens.
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const PanLoader(size: 140),
-              const SizedBox(height: 8),
-              Text('Analyzing your food…', style: text.titleLarge),
-              const SizedBox(height: 4),
-              Text(
-                'Camera capture arrives in a later step.',
-                style: text.bodyMedium?.copyWith(color: palette.muted),
-              ),
-              const SizedBox(height: 24),
-              OutlinedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Close'),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
