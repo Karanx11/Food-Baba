@@ -252,6 +252,58 @@ void main() {
     expect(find.text('Protein 4 g · Carbs 30 g · Fat 6 g'), findsOneWidget);
   });
 
+  testWidgets('editing a food corrects its macros before logging', (
+    tester,
+  ) async {
+    _tallView(tester);
+    await tester.pumpWidget(
+      testApp(
+        home: const HomeShell(),
+        photoSource: FakePhotoSource(
+          photo: CapturedPhoto(bytes: kTinyPng, mimeType: 'image/png'),
+        ),
+        foodAnalyzer: FakeFoodAnalyzer(
+          result: const [
+            DetectedFood(
+              name: 'Chicken Biryani',
+              servingLabel: '1 plate',
+              gramsPerServing: 250,
+              servings: 1,
+              // The model over-counted protein at 70 g per plate.
+              perServing: Nutrition(
+                calories: 450,
+                proteinG: 70,
+                carbsG: 52,
+                fatG: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    await _settle(tester);
+    await _snap(tester, PhotoOrigin.camera);
+    expect(find.text('70 g'), findsOneWidget); // the wrong protein
+
+    // Open the editor and correct protein to a realistic 25 g.
+    await tester.tap(find.byKey(const Key('review-edit-Chicken Biryani')));
+    await _settle(tester);
+    expect(find.text('Edit food'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextFormField, 'Protein'), '25');
+    await tester.tap(find.text('Save'));
+    await _settle(tester);
+
+    // Card and totals reflect the correction.
+    expect(find.text('70 g'), findsNothing);
+    expect(find.text('25 g'), findsOneWidget);
+    expect(find.text('Protein 25 g · Carbs 52 g · Fat 16 g'), findsOneWidget);
+
+    await tester.tap(find.text('Add 1 to Lunch'));
+    await _settle(tester);
+    final entries = _todaysEntries(tester);
+    expect(entries.single.perServing.proteinG, 25);
+  });
+
   testWidgets('the demo analyzer shows a demo banner in review', (
     tester,
   ) async {

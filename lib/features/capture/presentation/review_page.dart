@@ -14,6 +14,7 @@ import '../../log/domain/food_entry.dart';
 import '../../log/domain/nutrition.dart';
 import '../../log/presentation/meal_type_ui.dart';
 import '../domain/detected_food.dart';
+import 'edit_food_sheet.dart';
 
 /// Shows the foods found in a photo so the user can adjust portions, drop
 /// wrong items, and log the rest to a meal. Pops `true` if anything was saved.
@@ -158,6 +159,10 @@ class _ReviewPageState extends ConsumerState<ReviewPage> {
                   food: food,
                   onServings: (s) =>
                       setState(() => _foods[i] = food.copyWith(servings: s)),
+                  onEdit: () async {
+                    final edited = await EditFoodSheet.show(context, food);
+                    if (edited != null) setState(() => _foods[i] = edited);
+                  },
                   onRemove: () => setState(() => _foods[i] = null),
                 ),
               ),
@@ -218,6 +223,7 @@ class _FoodCard extends StatelessWidget {
   const _FoodCard({
     required this.food,
     required this.onServings,
+    required this.onEdit,
     required this.onRemove,
   });
 
@@ -227,6 +233,7 @@ class _FoodCard extends StatelessWidget {
 
   final DetectedFood food;
   final ValueChanged<double> onServings;
+  final VoidCallback onEdit;
   final VoidCallback onRemove;
 
   @override
@@ -260,6 +267,12 @@ class _FoodCard extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                key: Key('review-edit-${food.name}'),
+                tooltip: 'Edit',
+                onPressed: onEdit,
+                icon: Icon(Icons.edit_outlined, color: palette.muted),
               ),
               IconButton(
                 key: Key('review-remove-${food.name}'),

@@ -36,12 +36,18 @@ class DetectedFood {
 
   Nutrition get total => perServing * servings;
 
-  DetectedFood copyWith({double? servings}) => DetectedFood(
-    name: name,
-    servingLabel: servingLabel,
-    gramsPerServing: gramsPerServing,
+  DetectedFood copyWith({
+    String? name,
+    String? servingLabel,
+    double? gramsPerServing,
+    double? servings,
+    Nutrition? perServing,
+  }) => DetectedFood(
+    name: name ?? this.name,
+    servingLabel: servingLabel ?? this.servingLabel,
+    gramsPerServing: gramsPerServing ?? this.gramsPerServing,
     servings: servings ?? this.servings,
-    perServing: perServing,
+    perServing: perServing ?? this.perServing,
     confidence: confidence,
     notes: notes,
   );
