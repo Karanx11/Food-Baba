@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:food_baba/features/capture/data/photo_source.dart';
+import 'package:food_baba/features/capture/domain/detected_food.dart';
 import 'package:food_baba/features/capture/domain/food_analyzer.dart';
 import 'package:food_baba/features/capture/presentation/review_page.dart';
 import 'package:food_baba/features/log/application/log_providers.dart';
 import 'package:food_baba/features/log/domain/food_entry.dart';
+import 'package:food_baba/features/log/domain/nutrition.dart';
 import 'package:food_baba/features/shell/home_shell.dart';
 
 import 'helpers/fake_capture.dart';
@@ -201,6 +203,53 @@ void main() {
 
     expect(find.byType(ReviewPage), findsNothing);
     expect(find.textContaining('No food found'), findsOneWidget);
+  });
+
+  testWidgets('the review card shows macros, micros and notes', (tester) async {
+    _tallView(tester);
+    await tester.pumpWidget(
+      testApp(
+        home: const HomeShell(),
+        photoSource: FakePhotoSource(
+          photo: CapturedPhoto(bytes: kTinyPng, mimeType: 'image/png'),
+        ),
+        foodAnalyzer: FakeFoodAnalyzer(
+          result: const [
+            DetectedFood(
+              name: 'Kulhad Masala Chai',
+              servingLabel: '1 kulhad',
+              gramsPerServing: 150,
+              servings: 1,
+              perServing: Nutrition(
+                calories: 210,
+                proteinG: 4,
+                carbsG: 30,
+                fatG: 6,
+                sugarG: 28,
+                fiberG: 0,
+                sodiumMg: 90,
+              ),
+              notes: 'Provides calcium from milk.',
+            ),
+          ],
+        ),
+      ),
+    );
+    await _settle(tester);
+    await _snap(tester, PhotoOrigin.camera);
+
+    // Macro pills (grams) and the micronutrient line are shown.
+    expect(find.text('4 g'), findsOneWidget); // protein
+    expect(find.text('30 g'), findsOneWidget); // carbs
+    expect(find.text('6 g'), findsOneWidget); // fat
+    expect(find.text('Protein'), findsOneWidget);
+    expect(
+      find.text('Sugar 28 g   ·   Fiber 0 g   ·   Sodium 90 mg'),
+      findsOneWidget,
+    );
+    expect(find.text('Provides calcium from milk.'), findsOneWidget);
+    // Totals under the summary.
+    expect(find.text('Protein 4 g · Carbs 30 g · Fat 6 g'), findsOneWidget);
   });
 
   testWidgets('the demo analyzer shows a demo banner in review', (

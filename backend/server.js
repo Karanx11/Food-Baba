@@ -58,6 +58,7 @@ const FOOD_SCHEMA = {
           fiberG: { type: 'number' },
           sodiumMg: { type: 'number' },
           confidence: { type: 'number' },
+          notes: { type: 'string' },
         },
         required: [
           'name',
@@ -87,6 +88,9 @@ const PROMPT = [
   '- calories, proteinG, carbsG, fatG, sugarG, fiberG are PER ONE serving;',
   '  sodiumMg is per serving in milligrams.',
   '- confidence: 0..1, how sure you are of the item.',
+  '- notes: a short phrase naming notable micronutrients or health facts,',
+  '  e.g. "High in calcium and vitamin B12" or "Rich in fibre and iron".',
+  '  Keep it under 12 words. Use an empty string if nothing stands out.',
   '',
   'Prefer common Indian dishes when they match. If the photo has no food,',
   'return an empty foods array.',
