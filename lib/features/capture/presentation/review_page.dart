@@ -14,6 +14,7 @@ import '../../log/domain/food_entry.dart';
 import '../../log/domain/nutrition.dart';
 import '../../log/presentation/meal_type_ui.dart';
 import '../domain/detected_food.dart';
+import 'edit_food_sheet.dart';
 
 /// Shows the foods found in a photo so the user can adjust portions, drop
 /// wrong items, and log the rest to a meal. Pops `true` if anything was saved.
@@ -128,18 +129,21 @@ class _ReviewPageState extends ConsumerState<ReviewPage> {
           ),
           const SizedBox(height: 12),
           if (widget.isDemo) ...[_DemoBanner(), const SizedBox(height: 12)],
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '$keptCount ${keptCount == 1 ? "item" : "items"} · '
-                  '${_total.calories.round()} kcal',
-                  style: text.titleMedium,
-                ),
-              ),
-            ],
+          Text(
+            '$keptCount ${keptCount == 1 ? "item" : "items"} · '
+            '${_total.calories.round()} kcal',
+            style: text.titleMedium,
           ),
-          const SizedBox(height: 8),
+          if (keptCount > 0) ...[
+            const SizedBox(height: 2),
+            Text(
+              'Protein ${compactNumber(_total.proteinG)} g · '
+              'Carbs ${compactNumber(_total.carbsG)} g · '
+              'Fat ${compactNumber(_total.fatG)} g',
+              style: text.bodySmall?.copyWith(color: palette.muted),
+            ),
+          ],
+          const SizedBox(height: 12),
           Text('Add to', style: text.titleSmall),
           const SizedBox(height: 8),
           MealChips(
@@ -155,6 +159,10 @@ class _ReviewPageState extends ConsumerState<ReviewPage> {
                   food: food,
                   onServings: (s) =>
                       setState(() => _foods[i] = food.copyWith(servings: s)),
+                  onEdit: () async {
+                    final edited = await EditFoodSheet.show(context, food);
+                    if (edited != null) setState(() => _foods[i] = edited);
+                  },
                   onRemove: () => setState(() => _foods[i] = null),
                 ),
               ),
@@ -215,6 +223,7 @@ class _FoodCard extends StatelessWidget {
   const _FoodCard({
     required this.food,
     required this.onServings,
+    required this.onEdit,
     required this.onRemove,
   });
 
@@ -224,6 +233,7 @@ class _FoodCard extends StatelessWidget {
 
   final DetectedFood food;
   final ValueChanged<double> onServings;
+  final VoidCallback onEdit;
   final VoidCallback onRemove;
 
   @override
@@ -235,27 +245,34 @@ class _FoodCard extends StatelessWidget {
 
     return AppCard(
       key: Key('review-${food.name}'),
-      padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+      padding: const EdgeInsets.fromLTRB(16, 10, 12, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Text(food.name, style: text.titleMedium),
-                    const SizedBox(height: 2),
+                    Flexible(child: Text(food.name, style: text.titleMedium)),
+                    const SizedBox(width: 8),
                     Text(
-                      '${total.calories.round()} kcal · '
-                      'P ${compactNumber(total.proteinG)} · '
-                      'C ${compactNumber(total.carbsG)} · '
-                      'F ${compactNumber(total.fatG)} g',
-                      style: text.bodySmall?.copyWith(color: palette.muted),
+                      '${total.calories.round()} kcal',
+                      style: text.titleSmall?.copyWith(
+                        color: AppColors.flame,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                key: Key('review-edit-${food.name}'),
+                tooltip: 'Edit',
+                onPressed: onEdit,
+                icon: Icon(Icons.edit_outlined, color: palette.muted),
               ),
               IconButton(
                 key: Key('review-remove-${food.name}'),
@@ -264,6 +281,46 @@ class _FoodCard extends StatelessWidget {
                 icon: Icon(Icons.close_rounded, color: palette.muted),
               ),
             ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              _MacroPill(
+                label: 'Protein',
+                grams: total.proteinG,
+                color: AppColors.protein,
+              ),
+              const SizedBox(width: 8),
+              _MacroPill(
+                label: 'Carbs',
+                grams: total.carbsG,
+                color: AppColors.carbs,
+              ),
+              const SizedBox(width: 8),
+              _MacroPill(label: 'Fat', grams: total.fatG, color: AppColors.fat),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Sugar ${compactNumber(total.sugarG)} g   ·   '
+            'Fiber ${compactNumber(total.fiberG)} g   ·   '
+            'Sodium ${total.sodiumMg.round()} mg',
+            style: text.bodySmall?.copyWith(color: palette.muted),
+          ),
+          if (food.notes case final notes?) ...[
+            const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.eco_rounded, size: 16, color: AppColors.fat),
+                const SizedBox(width: 6),
+                Expanded(child: Text(notes, style: text.bodySmall)),
+              ],
+            ),
+          ],
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Divider(height: 1),
           ),
           Row(
             children: [
@@ -294,6 +351,50 @@ class _FoodCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A soft pill showing one macronutrient's grams and label.
+class _MacroPill extends StatelessWidget {
+  const _MacroPill({
+    required this.label,
+    required this.grams,
+    required this.color,
+  });
+
+  final String label;
+  final double grams;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.soft(color, Theme.of(context).brightness),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
+          children: [
+            Text(
+              '${compactNumber(grams)} g',
+              style: text.titleSmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text(
+              label,
+              style: text.labelSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

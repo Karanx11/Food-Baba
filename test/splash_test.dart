@@ -18,8 +18,10 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.byType(HomeShell), findsNothing);
 
-    // Past the minimum duration plus the fade, the shell is in place.
+    // Past the minimum duration plus the fade, the shell is in place. The gate
+    // resolves the local session first, so let those providers settle.
     await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(milliseconds: 500));
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byType(HomeShell), findsOneWidget);
     expect(find.byType(BurgerLoader), findsNothing);

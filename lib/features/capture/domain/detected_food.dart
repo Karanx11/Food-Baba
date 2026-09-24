@@ -10,6 +10,7 @@ class DetectedFood {
     this.servings = 1,
     required this.perServing,
     this.confidence,
+    this.notes,
   });
 
   final String name;
@@ -29,15 +30,26 @@ class DetectedFood {
   /// 0..1, if the analyzer reported how sure it was.
   final double? confidence;
 
+  /// A short note on notable micronutrients or health facts, e.g.
+  /// "High in calcium and vitamin B12". Null when the analyzer gave none.
+  final String? notes;
+
   Nutrition get total => perServing * servings;
 
-  DetectedFood copyWith({double? servings}) => DetectedFood(
-    name: name,
-    servingLabel: servingLabel,
-    gramsPerServing: gramsPerServing,
+  DetectedFood copyWith({
+    String? name,
+    String? servingLabel,
+    double? gramsPerServing,
+    double? servings,
+    Nutrition? perServing,
+  }) => DetectedFood(
+    name: name ?? this.name,
+    servingLabel: servingLabel ?? this.servingLabel,
+    gramsPerServing: gramsPerServing ?? this.gramsPerServing,
     servings: servings ?? this.servings,
-    perServing: perServing,
+    perServing: perServing ?? this.perServing,
     confidence: confidence,
+    notes: notes,
   );
 
   factory DetectedFood.fromJson(Map<String, Object?> json) {
@@ -62,6 +74,9 @@ class DetectedFood {
         sodiumMg: toNum(json['sodiumMg']),
       ),
       confidence: json['confidence'] == null ? null : toNum(json['confidence']),
+      notes: (json['notes'] as String?)?.trim().isNotEmpty == true
+          ? (json['notes'] as String).trim()
+          : null,
     );
   }
 

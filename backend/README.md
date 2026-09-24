@@ -43,11 +43,18 @@ per-serving `calories`, `proteinG`, `carbsG`, `fatG`, `sugarG`, `fiberG`,
 
 ## Configuration
 
-| Variable         | Default            | Purpose |
-|------------------|--------------------|---------|
-| `GEMINI_API_KEY` | —                  | Required. Your Google AI Studio key. |
-| `GEMINI_MODEL`   | `gemini-3.8-flash` | The vision model. Change if your key uses another. |
-| `PORT`           | `8787`             | Port to listen on. |
+| Variable                 | Default            | Purpose |
+|--------------------------|--------------------|---------|
+| `GEMINI_API_KEY`         | —                  | Required. Your Google AI Studio key. |
+| `GEMINI_MODEL`           | `gemini-3.6-flash` | The primary vision model. |
+| `GEMINI_FALLBACK_MODELS` | `gemini-flash-latest,gemini-3.1-flash-lite` | Comma-separated models tried when the primary is busy. |
+| `PORT`                   | `8787`             | Port to listen on. |
+
+The free tier throttles a single model with `503 high demand`. `/analyze`
+handles this: it retries the primary once, then tries each fallback model
+(they have separate capacity), all within one request, so a Snap usually
+succeeds without the user retrying. If your key lacks a model, list ones it
+has (see `GET /v1beta/models`).
 
 ## Deploying
 

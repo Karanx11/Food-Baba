@@ -34,6 +34,7 @@ class MockFoodAnalyzer implements FoodAnalyzer {
           sodiumMg: 450,
         ),
         confidence: 0.82,
+        notes: 'Good source of plant protein and fibre.',
       ),
       DetectedFood(
         name: 'Steamed rice',
@@ -50,6 +51,7 @@ class MockFoodAnalyzer implements FoodAnalyzer {
           sodiumMg: 2,
         ),
         confidence: 0.88,
+        notes: 'Mostly carbs; pair with protein and veg.',
       ),
       DetectedFood(
         name: 'Roti',
@@ -66,6 +68,7 @@ class MockFoodAnalyzer implements FoodAnalyzer {
           sodiumMg: 120,
         ),
         confidence: 0.7,
+        notes: 'Whole-wheat; provides fibre and B vitamins.',
       ),
     ];
   }

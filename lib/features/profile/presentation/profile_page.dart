@@ -6,6 +6,7 @@ import '../../../core/widgets/circle_icon_button.dart';
 import '../../../core/widgets/loaders/burger_loader.dart';
 import '../../../core/widgets/surfaces.dart';
 import '../../../core/widgets/top_bar.dart';
+import '../../auth/application/auth_providers.dart';
 import '../application/profile_providers.dart';
 import '../domain/nutrition_targets.dart';
 import '../domain/user_profile.dart';
@@ -62,30 +63,128 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.person_rounded, size: 64, color: scheme.primary),
-            const SizedBox(height: 16),
-            Text('Set up your profile', style: text.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              'Get calorie and macro targets tailored to you.',
-              textAlign: TextAlign.center,
-              style: text.bodyMedium?.copyWith(color: scheme.outline),
+    return ListView(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        24,
+        16,
+        96 + MediaQuery.paddingOf(context).bottom,
+      ),
+      children: [
+        Icon(Icons.person_rounded, size: 64, color: scheme.primary),
+        const SizedBox(height: 16),
+        Text(
+          'Set up your profile',
+          style: text.titleLarge,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Get calorie and macro targets tailored to you.',
+          textAlign: TextAlign.center,
+          style: text.bodyMedium?.copyWith(color: scheme.outline),
+        ),
+        const SizedBox(height: 20),
+        Center(
+          child: FilledButton.icon(
+            onPressed: () =>
+                Navigator.of(context).push(ProfileFormPage.route()),
+            icon: const Icon(Icons.arrow_forward_rounded),
+            label: const Text('Get started'),
+          ),
+        ),
+        const SizedBox(height: 24),
+        const _AccountCard(),
+      ],
+    );
+  }
+}
+
+/// Signed-in email with log out and delete-account controls.
+class _AccountCard extends ConsumerWidget {
+  const _AccountCard();
+
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed =
+        await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Delete account?'),
+            content: const Text(
+              'This erases your account, profile, food log and weight history '
+              'on this device. This cannot be undone.',
             ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: () =>
-                  Navigator.of(context).push(ProfileFormPage.route()),
-              icon: const Icon(Icons.arrow_forward_rounded),
-              label: const Text('Get started'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(ctx).colorScheme.error,
+                ),
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+    // The gate swaps to signup once the account is gone.
+    if (confirmed) {
+      await ref.read(authControllerProvider.notifier).deleteAccount();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final text = Theme.of(context).textTheme;
+    final palette = AppPalette.of(context);
+    final email = ref.watch(authControllerProvider).value?.email ?? '';
+
+    return AppCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Account', style: text.titleMedium),
+          if (email.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  Icons.mail_outline_rounded,
+                  size: 18,
+                  color: palette.muted,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    email,
+                    style: text.bodyMedium?.copyWith(color: palette.muted),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            key: const Key('log-out'),
+            onPressed: () => ref.read(authControllerProvider.notifier).logOut(),
+            icon: const Icon(Icons.logout_rounded),
+            label: const Text('Log out'),
+          ),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            key: const Key('delete-account'),
+            onPressed: () => _confirmDelete(context, ref),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            icon: const Icon(Icons.delete_outline_rounded),
+            label: const Text('Delete account'),
+          ),
+        ],
       ),
     );
   }
@@ -180,6 +279,8 @@ class _ProfileSummary extends StatelessWidget {
           icon: const Icon(Icons.edit_outlined),
           label: const Text('Edit profile'),
         ),
+        const SizedBox(height: 16),
+        const _AccountCard(),
       ],
     );
   }

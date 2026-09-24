@@ -4,6 +4,9 @@ import 'package:food_baba/app/app.dart';
 import 'package:food_baba/app/theme.dart';
 import 'package:food_baba/app/theme_mode.dart';
 import 'package:food_baba/core/db/app_database.dart';
+import 'package:food_baba/features/auth/application/auth_providers.dart';
+import 'package:food_baba/features/auth/data/auth_repository.dart';
+import 'package:food_baba/features/auth/domain/account.dart';
 import 'package:food_baba/features/capture/application/capture_providers.dart';
 import 'package:food_baba/features/capture/data/photo_source.dart';
 import 'package:food_baba/features/capture/domain/food_analyzer.dart';
@@ -18,6 +21,15 @@ import 'package:sembast/sembast_memory.dart';
 
 /// Fixed "now" for tests: a Tuesday at 1 pm, so the default meal is lunch.
 final testNow = DateTime(2026, 9, 22, 13);
+
+/// A signed-in account for tests. Hashes are placeholders; tests that log in
+/// build their own account.
+const testAccount = Account(
+  email: 'karan@foodbaba.test',
+  passwordHash: 'x',
+  securityQuestion: 'What is your favourite food?',
+  securityAnswerHash: 'x',
+);
 
 /// A fresh in-memory database config, isolated per call.
 DatabaseConfig memoryDatabase() => DatabaseConfig(
@@ -76,9 +88,14 @@ Widget testApp({
   ThemeMode initialThemeMode = ThemeMode.system,
   PhotoSource? photoSource,
   FoodAnalyzer? foodAnalyzer,
+  AuthRepository? authRepository,
 }) {
   return ProviderScope(
     overrides: [
+      authRepositoryProvider.overrideWithValue(
+        authRepository ??
+            InMemoryAuthRepository(account: testAccount, signedIn: true),
+      ),
       profileRepositoryProvider.overrideWithValue(
         repository ?? InMemoryProfileRepository(),
       ),
