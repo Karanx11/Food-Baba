@@ -22,6 +22,9 @@ abstract interface class FoodLogRepository {
 
   Stream<int> watchWater(String dayKey);
   Future<void> setWater(String dayKey, int glasses);
+
+  /// Removes all entries and water records, e.g. on account deletion.
+  Future<void> clear();
 }
 
 /// Sembast-backed store. Entries are documents keyed by id; water is one
@@ -122,6 +125,13 @@ class SembastFoodLogRepository implements FoodLogRepository {
   Future<void> setWater(String dayKey, int glasses) async {
     final db = await _db.database;
     await _water.record(dayKey).put(db, {'glasses': glasses.clamp(0, 99)});
+  }
+
+  @override
+  Future<void> clear() async {
+    final db = await _db.database;
+    await _entries.delete(db);
+    await _water.delete(db);
   }
 
   static List<FoodEntry> _toEntries(

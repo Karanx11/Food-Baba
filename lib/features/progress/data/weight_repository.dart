@@ -10,6 +10,9 @@ abstract interface class WeightRepository {
 
   /// Records [kg] for [dayKey], replacing that day's earlier value.
   Future<void> log(String dayKey, double kg);
+
+  /// Removes all recorded weights, e.g. on account deletion.
+  Future<void> clear();
 }
 
 /// Sembast store with one document per day, keyed by `yyyy-MM-dd`.
@@ -40,5 +43,11 @@ class SembastWeightRepository implements WeightRepository {
   Future<void> log(String dayKey, double kg) async {
     final db = await _db.database;
     await _weights.record(dayKey).put(db, {'kg': kg});
+  }
+
+  @override
+  Future<void> clear() async {
+    final db = await _db.database;
+    await _weights.delete(db);
   }
 }

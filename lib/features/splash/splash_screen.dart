@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/widgets/loaders/burger_loader.dart';
 import '../../core/widgets/surfaces.dart';
-import '../shell/home_shell.dart';
+import '../auth/presentation/auth_gate.dart';
 
 /// Branded launch screen. Shows the burger loader for [minimumDuration], then
 /// fades into the navigation shell.
@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 400),
         // Custom routes skip the theme's transitions, so add the background here.
-        pageBuilder: (_, _, _) => const AppBackground(child: HomeShell()),
+        pageBuilder: (_, _, _) => const AppBackground(child: AuthGate()),
         transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
