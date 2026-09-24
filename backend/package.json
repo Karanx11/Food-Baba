@@ -1,8 +1,8 @@
 {
-  "name": "food-baba-backend",
+  "name": "food-guruji-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "Food Baba API: analyzes food photos with a vision model, keeping the API key server-side.",
+  "description": "Food Guruji API: analyzes food photos with a vision model, keeping the API key server-side.",
   "type": "module",
   "main": "server.js",
   "scripts": {

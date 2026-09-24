@@ -1,4 +1,4 @@
-// Food Baba API.
+// Food Guruji API.
 //
 // One endpoint, POST /analyze, takes a food photo and returns the foods in
 // it with estimated portions and nutrition. It calls Google's Gemini vision
@@ -252,7 +252,7 @@ app.post('/analyze', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(
-    `Food Baba API on http://localhost:${PORT} (models: ${MODELS.join(', ')})`,
+    `Food Guruji API on http://localhost:${PORT} (models: ${MODELS.join(', ')})`,
   );
   if (!API_KEY) console.warn('GEMINI_API_KEY is not set; /analyze will 503.');
 });

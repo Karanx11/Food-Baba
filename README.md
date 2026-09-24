@@ -1,4 +1,4 @@
-# Food Baba
+# Food Guruji
 
 Snap a photo of any food and get its nutrition breakdown, then track and analyze your eating over time.
 
@@ -8,7 +8,7 @@ Flutter app (Android, iOS, web) with a Node/Express backend planned for AI visio
 
 | Step | What | Verified |
 |------|------|----------|
-| 1 | Flutter scaffold (`food_baba`, Android + iOS + web) | analyze, web build, renders in browser |
+| 1 | Flutter scaffold (`food_guruji`, Android + iOS + web) | analyze, web build, renders in browser |
 | 2 | Brand theme (mint / charcoal / off-white), 4-tab shell, placeholder pages | analyze, widget tests, light + dark screenshots |
 | 3 | Loading animations: single-stroke burger loader (splash) and hopping-pan loader (Snap preview sheet) | analyze, widget tests, screenshots |
 | 4 | Profile (sex, age, height, weight, activity, goal) with Mifflin-St Jeor calorie and macro targets, saved locally via shared_preferences, state via Riverpod | analyze, 23 unit + widget tests, screenshots incl. reload persistence |

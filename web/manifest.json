@@ -1,11 +1,11 @@
 {
-    "name": "food_baba",
-    "short_name": "food_baba",
+    "name": "Food Guruji",
+    "short_name": "Food Guruji",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Food Guruji: photo-based nutrition tracking.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -1,4 +1,4 @@
-package com.foodbaba.food_baba
+package com.foodguruji.food_guruji
 
 import io.flutter.embedding.android.FlutterActivity
 

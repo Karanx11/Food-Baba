@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/profile/domain/nutrition_targets.dart';
-import 'package:food_baba/features/profile/domain/user_profile.dart';
+import 'package:food_guruji/features/profile/domain/nutrition_targets.dart';
+import 'package:food_guruji/features/profile/domain/user_profile.dart';
 
 void main() {
   const base = UserProfile(

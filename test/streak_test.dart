@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/core/dates.dart';
-import 'package:food_baba/features/streak/domain/streak.dart';
+import 'package:food_guruji/core/dates.dart';
+import 'package:food_guruji/features/streak/domain/streak.dart';
 
 /// Day keys for [count] consecutive days ending at [end] (inclusive).
 Set<String> _run(DateTime end, int count) => {

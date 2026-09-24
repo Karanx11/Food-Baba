@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/insights/domain/health_score.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
-import 'package:food_baba/features/profile/domain/nutrition_targets.dart';
+import 'package:food_guruji/features/insights/domain/health_score.dart';
+import 'package:food_guruji/features/log/domain/nutrition.dart';
+import 'package:food_guruji/features/profile/domain/nutrition_targets.dart';
 
 /// Asha's targets: 2556 kcal, protein 112 g, carbs 367 g, fat 71 g.
 const _targets = NutritionTargets(

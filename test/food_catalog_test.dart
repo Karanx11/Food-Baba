@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/food_search/data/food_catalog_repository.dart';
-import 'package:food_baba/features/food_search/domain/food_item.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
+import 'package:food_guruji/features/food_search/data/food_catalog_repository.dart';
+import 'package:food_guruji/features/food_search/domain/food_item.dart';
+import 'package:food_guruji/features/log/domain/nutrition.dart';
 
 /// Energy implied by the macros (Atwater factors, fiber counted at 2 kcal/g).
 double _impliedCalories(Nutrition n) =>

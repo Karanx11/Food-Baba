@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/auth/application/auth_providers.dart';
-import 'package:food_baba/features/auth/data/auth_repository.dart';
-import 'package:food_baba/features/auth/domain/account.dart';
-import 'package:food_baba/features/log/application/log_providers.dart';
-import 'package:food_baba/features/profile/application/profile_providers.dart';
-import 'package:food_baba/features/profile/data/profile_repository.dart';
+import 'package:food_guruji/features/auth/application/auth_providers.dart';
+import 'package:food_guruji/features/auth/data/auth_repository.dart';
+import 'package:food_guruji/features/auth/domain/account.dart';
+import 'package:food_guruji/features/log/application/log_providers.dart';
+import 'package:food_guruji/features/profile/application/profile_providers.dart';
+import 'package:food_guruji/features/profile/data/profile_repository.dart';
 
 import 'helpers/fixtures.dart';
 import 'helpers/test_app.dart';

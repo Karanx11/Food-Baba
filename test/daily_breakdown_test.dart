@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/insights/presentation/daily_breakdown_page.dart';
-import 'package:food_baba/features/log/domain/food_entry.dart';
-import 'package:food_baba/features/profile/presentation/profile_form_page.dart';
+import 'package:food_guruji/features/insights/presentation/daily_breakdown_page.dart';
+import 'package:food_guruji/features/log/domain/food_entry.dart';
+import 'package:food_guruji/features/profile/presentation/profile_form_page.dart';
 
 import 'helpers/fixtures.dart';
 

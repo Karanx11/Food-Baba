@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/core/widgets/loaders/burger_loader.dart';
-import 'package:food_baba/core/widgets/loaders/pan_loader.dart';
+import 'package:food_guruji/core/widgets/loaders/burger_loader.dart';
+import 'package:food_guruji/core/widgets/loaders/pan_loader.dart';
 
 Widget _host(Widget child) => MaterialApp(
   home: Scaffold(body: Center(child: child)),

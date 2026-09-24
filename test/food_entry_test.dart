@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/core/dates.dart';
-import 'package:food_baba/features/log/domain/daily_log.dart';
-import 'package:food_baba/features/log/domain/food_entry.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
+import 'package:food_guruji/core/dates.dart';
+import 'package:food_guruji/features/log/domain/daily_log.dart';
+import 'package:food_guruji/features/log/domain/food_entry.dart';
+import 'package:food_guruji/features/log/domain/nutrition.dart';
 
 void main() {
   const dal = Nutrition(calories: 180, proteinG: 9, carbsG: 27, fatG: 4);

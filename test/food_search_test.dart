@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/core/format.dart';
-import 'package:food_baba/features/food_search/domain/food_item.dart';
-import 'package:food_baba/features/food_search/domain/food_search.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
+import 'package:food_guruji/core/format.dart';
+import 'package:food_guruji/features/food_search/domain/food_item.dart';
+import 'package:food_guruji/features/food_search/domain/food_search.dart';
+import 'package:food_guruji/features/log/domain/nutrition.dart';
 
 FoodItem _food(String id, String name, {List<String> aliases = const []}) =>
     FoodItem(

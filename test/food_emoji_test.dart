@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/core/food_emoji.dart';
+import 'package:food_guruji/core/food_emoji.dart';
 
 void main() {
   test('matches whole-word prefixes, first rule wins', () {

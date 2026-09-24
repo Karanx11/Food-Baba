@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/capture/data/photo_source.dart';
-import 'package:food_baba/features/capture/domain/detected_food.dart';
-import 'package:food_baba/features/capture/domain/food_analyzer.dart';
-import 'package:food_baba/features/capture/presentation/review_page.dart';
-import 'package:food_baba/features/log/application/log_providers.dart';
-import 'package:food_baba/features/log/domain/food_entry.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
-import 'package:food_baba/features/shell/home_shell.dart';
+import 'package:food_guruji/features/capture/data/photo_source.dart';
+import 'package:food_guruji/features/capture/domain/detected_food.dart';
+import 'package:food_guruji/features/capture/domain/food_analyzer.dart';
+import 'package:food_guruji/features/capture/presentation/review_page.dart';
+import 'package:food_guruji/features/log/application/log_providers.dart';
+import 'package:food_guruji/features/log/domain/food_entry.dart';
+import 'package:food_guruji/features/log/domain/nutrition.dart';
+import 'package:food_guruji/features/shell/home_shell.dart';
 
 import 'helpers/fake_capture.dart';
 import 'helpers/test_app.dart';

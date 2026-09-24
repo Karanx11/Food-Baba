@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/profile/data/profile_repository.dart';
-import 'package:food_baba/features/profile/presentation/profile_form_page.dart';
-import 'package:food_baba/features/progress/application/progress_providers.dart';
-import 'package:food_baba/features/progress/presentation/weight_chart.dart';
-import 'package:food_baba/features/shell/home_shell.dart';
+import 'package:food_guruji/features/profile/data/profile_repository.dart';
+import 'package:food_guruji/features/profile/presentation/profile_form_page.dart';
+import 'package:food_guruji/features/progress/application/progress_providers.dart';
+import 'package:food_guruji/features/progress/presentation/weight_chart.dart';
+import 'package:food_guruji/features/shell/home_shell.dart';
 
 import 'helpers/fixtures.dart';
 import 'helpers/test_app.dart';

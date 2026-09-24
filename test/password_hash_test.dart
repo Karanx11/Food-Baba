@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/auth/domain/password_hash.dart';
+import 'package:food_guruji/features/auth/domain/password_hash.dart';
 
 void main() {
   group('PasswordHash', () {
