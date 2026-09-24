@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../app/l10n/language_store.dart';
 import '../application/auth_providers.dart';
 import 'auth_scaffold.dart';
 
@@ -85,12 +84,13 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final s = ref.watch(stringsProvider);
     final askingQuestion = _question != null;
     return AuthScaffold(
       showBack: true,
-      title: s.resetTitle,
-      subtitle: askingQuestion ? s.answerYourQuestion : s.findYourAccount,
+      title: 'Reset password',
+      subtitle: askingQuestion
+          ? 'Answer your security question'
+          : 'Find your account',
       children: [
         Form(
           key: _formKey,
@@ -101,9 +101,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 controller: _email,
                 enabled: !askingQuestion,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: s.emailLabel,
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
                 ),
                 validator: AuthValidators.email,
               ),
@@ -114,7 +114,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
                   ),
-                  child: Text(_busy ? s.checking : s.continueLabel),
+                  child: Text(_busy ? 'Checking…' : 'Continue'),
                 ),
               ] else ...[
                 const SizedBox(height: 16),
@@ -122,9 +122,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _answer,
-                  decoration: InputDecoration(
-                    labelText: s.yourAnswer,
-                    border: const OutlineInputBorder(),
+                  decoration: const InputDecoration(
+                    labelText: 'Your answer',
+                    border: OutlineInputBorder(),
                   ),
                   validator: (v) => AuthValidators.required(v, 'your answer'),
                 ),
@@ -132,10 +132,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 TextFormField(
                   controller: _password,
                   obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: s.newPassword,
-                    helperText: s.passwordHelper,
-                    border: const OutlineInputBorder(),
+                  decoration: const InputDecoration(
+                    labelText: 'New password',
+                    helperText: 'At least 6 characters',
+                    border: OutlineInputBorder(),
                   ),
                   validator: AuthValidators.password,
                 ),
@@ -145,7 +145,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
                   ),
-                  child: Text(_busy ? s.saving : s.resetPasswordButton),
+                  child: Text(_busy ? 'Saving…' : 'Reset password'),
                 ),
               ],
             ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../app/l10n/language_store.dart';
 import '../../../core/widgets/surfaces.dart';
 import '../application/auth_providers.dart';
 import 'auth_scaffold.dart';
@@ -66,10 +65,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final s = ref.watch(stringsProvider);
     return AuthScaffold(
-      title: s.createAccountTitle,
-      subtitle: s.dataStaysOnDevice,
+      title: 'Create your account',
+      subtitle: 'Your data stays on this device',
       children: [
         Form(
           key: _formKey,
@@ -80,9 +78,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
                 autofillHints: const [AutofillHints.email],
-                decoration: InputDecoration(
-                  labelText: s.emailLabel,
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
                 ),
                 validator: AuthValidators.email,
               ),
@@ -91,8 +89,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 controller: _password,
                 obscureText: _obscure,
                 decoration: InputDecoration(
-                  labelText: s.passwordLabel,
-                  helperText: s.passwordHelper,
+                  labelText: 'Password',
+                  helperText: 'At least 6 characters',
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     tooltip: _obscure ? 'Show' : 'Hide',
@@ -110,21 +108,21 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               TextFormField(
                 controller: _confirm,
                 obscureText: _obscure,
-                decoration: InputDecoration(
-                  labelText: s.confirmPassword,
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  labelText: 'Confirm password',
+                  border: OutlineInputBorder(),
                 ),
                 validator: (v) =>
-                    v == _password.text ? null : s.passwordsDontMatch,
+                    v == _password.text ? null : 'Passwords do not match',
               ),
               const SizedBox(height: 18),
               Text(
-                s.securityQuestion,
+                'Security question',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 4),
               Text(
-                s.securityQuestionHint,
+                'Used to reset your password if you forget it.',
                 style: Theme.of(context).textTheme.bodySmall
                     ?.copyWith(color: AppPalette.of(context).muted),
               ),
@@ -143,9 +141,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               TextFormField(
                 controller: _answer,
                 textCapitalization: TextCapitalization.none,
-                decoration: InputDecoration(
-                  labelText: s.yourAnswer,
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  labelText: 'Your answer',
+                  border: OutlineInputBorder(),
                 ),
                 validator: (v) => AuthValidators.required(v, 'an answer'),
               ),
@@ -155,7 +153,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),
                 ),
-                child: Text(_busy ? s.creating : s.createAccount),
+                child: Text(_busy ? 'Creating…' : 'Create account'),
               ),
             ],
           ),

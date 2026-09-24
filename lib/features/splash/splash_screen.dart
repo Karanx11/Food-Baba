@@ -1,16 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../app/l10n/language_store.dart';
 import '../../core/widgets/loaders/burger_loader.dart';
 import '../../core/widgets/surfaces.dart';
 import '../auth/presentation/auth_gate.dart';
 
 /// Branded launch screen. Shows the burger loader for [minimumDuration], then
 /// fades into the navigation shell.
-class SplashScreen extends ConsumerStatefulWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({
     super.key,
     this.minimumDuration = const Duration(milliseconds: 1800),
@@ -19,10 +17,10 @@ class SplashScreen extends ConsumerStatefulWidget {
   final Duration minimumDuration;
 
   @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> {
   Timer? _timer;
 
   @override
@@ -54,7 +52,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final strings = ref.watch(stringsProvider);
     return Scaffold(
       body: Center(
         child: Column(
@@ -71,7 +68,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              strings.tagline,
+              'Snap. Track. Thrive.',
               style: text.bodyMedium?.copyWith(color: scheme.outline),
             ),
           ],

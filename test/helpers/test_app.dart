@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:food_guruji/app/app.dart';
-import 'package:food_guruji/app/l10n/app_language.dart';
-import 'package:food_guruji/app/l10n/language_store.dart';
 import 'package:food_guruji/app/theme.dart';
 import 'package:food_guruji/app/theme_mode.dart';
 import 'package:food_guruji/core/db/app_database.dart';
@@ -88,8 +86,6 @@ Widget testApp({
   List<FoodItem> catalog = testCatalog,
   ThemeModeStore? themeStore,
   ThemeMode initialThemeMode = ThemeMode.system,
-  LanguageStore? languageStore,
-  AppLanguage initialLanguage = AppLanguage.english,
   PhotoSource? photoSource,
   FoodAnalyzer? foodAnalyzer,
   AuthRepository? authRepository,
@@ -112,10 +108,6 @@ Widget testApp({
         themeStore ?? InMemoryThemeModeStore(),
       ),
       initialThemeModeProvider.overrideWithValue(initialThemeMode),
-      languageStoreProvider.overrideWithValue(
-        languageStore ?? InMemoryLanguageStore(),
-      ),
-      initialLanguageProvider.overrideWithValue(initialLanguage),
       if (photoSource != null)
         photoSourceProvider.overrideWithValue(photoSource),
       if (foodAnalyzer != null)
