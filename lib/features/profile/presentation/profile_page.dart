@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/format.dart';
 import '../../../core/widgets/circle_icon_button.dart';
+import '../../../core/widgets/glass.dart';
 import '../../../core/widgets/loaders/burger_loader.dart';
 import '../../../core/widgets/surfaces.dart';
 import '../../../core/widgets/top_bar.dart';
@@ -120,8 +121,10 @@ class _AccountCard extends ConsumerWidget {
                 child: const Text('Cancel'),
               ),
               FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: Theme.of(ctx).colorScheme.error,
+                style: ButtonStyle(
+                  backgroundBuilder: glassBackground(
+                    Theme.of(ctx).colorScheme.error,
+                  ),
                 ),
                 onPressed: () => Navigator.of(ctx).pop(true),
                 child: const Text('Delete'),

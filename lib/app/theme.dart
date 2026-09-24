@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/widgets/glass.dart';
 import '../core/widgets/surfaces.dart';
 
 /// Accent and data colours. Neutral surfaces and inks are in [AppPalette].
@@ -88,22 +89,50 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
-      // Primary actions are black pills, as in the design.
+      // Primary actions are frosted-glass accent pills; the background is
+      // painted by GlassSurface via backgroundBuilder.
       filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          backgroundColor: p.ink,
-          foregroundColor: p.onInk,
-          shape: const StadiumBorder(),
-          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        style: ButtonStyle(
+          backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+          shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+          elevation: const WidgetStatePropertyAll(0),
+          foregroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.disabled)
+                ? Colors.white.withValues(alpha: 0.7)
+                : Colors.white,
+          ),
+          iconColor: const WidgetStatePropertyAll(Colors.white),
+          overlayColor: const WidgetStatePropertyAll(Color(0x1FFFFFFF)),
+          textStyle: const WidgetStatePropertyAll(
+            TextStyle(fontWeight: FontWeight.w700, letterSpacing: 0.2),
+          ),
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          ),
+          shape: const WidgetStatePropertyAll(StadiumBorder()),
+          backgroundBuilder: glassBackground(scheme.primary),
         ),
       ),
+      // Secondary actions are neutral frosted-glass pills.
       outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: p.ink,
-          backgroundColor: p.card,
-          side: BorderSide(color: p.border),
-          shape: const StadiumBorder(),
-          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        style: ButtonStyle(
+          backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+          shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+          elevation: const WidgetStatePropertyAll(0),
+          side: const WidgetStatePropertyAll(BorderSide.none),
+          foregroundColor: WidgetStatePropertyAll(p.ink),
+          iconColor: WidgetStatePropertyAll(p.ink),
+          overlayColor: WidgetStatePropertyAll(
+            scheme.primary.withValues(alpha: 0.08),
+          ),
+          textStyle: const WidgetStatePropertyAll(
+            TextStyle(fontWeight: FontWeight.w600),
+          ),
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          ),
+          shape: const WidgetStatePropertyAll(StadiumBorder()),
+          backgroundBuilder: glassBackground(null),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
