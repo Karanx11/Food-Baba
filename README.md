@@ -19,8 +19,9 @@ Flutter app (Android, iOS, web) with a Node/Express backend planned for AI visio
 | 9 | Lavender redesign from the user's reference: soft grey page with a lavender glow, white rounded cards, violet accent, black pill buttons, round floating nav with Snap in the middle. Home (week strip, Today's Goal gauge with macros left, meal cards with thumbnails), Daily Breakdown (270° calorie gauge, macro pills, water, health score), Goal Progress (goal and current weight, weight trend chart, BMI bar). Adds weight history and goal weight | analyze, 108 tests, browser light + dark |
 | 10 | Light/dark mode button in the Home header (moon / sun). Follows the device until tapped; the choice is saved and loaded before the first frame | analyze, 114 tests, browser incl. reload |
 | 11 | Camera capture: Snap opens Camera or Gallery, a food photo is analyzed, and detected foods appear on a review screen where portions are adjusted, items removed, and the rest logged. Node backend (backend/) calls Gemini with the key server-side; a built-in demo analyzer runs when no backend is set | analyze, 120 tests (6 capture-flow), backend syntax check |
+| 12 | Logging streaks: current and longest streak from logged days, an at-risk nudge when today is unlogged, milestone badges at 7/30/100 days, shown as a flame card on Home | analyze, 135 tests (streak logic + card), browser light + dark |
 
-Next up: barcode scan (Open Food Facts), then streaks and analytics.
+Next up: barcode scan (Open Food Facts), then analytics and reminders.
 
 ## Project layout
 
@@ -44,6 +45,7 @@ lib/
     insights/               health score and the Daily Breakdown page
     progress/               weight history, BMI and goal progress, Goal Progress page
     capture/                photo source, AI analyzer (backend + demo), review screen
+    streak/                 streak calculation and the Home flame card
 backend/                    Node/Express API that calls Gemini vision (see backend/README.md)
 assets/foods/               bundled food database (approximate values per 100 g)
 test/                       unit + widget tests (helpers/test_app.dart wires an in-memory store)

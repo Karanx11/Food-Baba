@@ -13,7 +13,7 @@ import cors from 'cors';
 const PORT = process.env.PORT || 8787;
 const API_KEY = process.env.GEMINI_API_KEY;
 // Override if your key has access to a different model.
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
 
 // What each food in the reply looks like. responseSchema makes Gemini return
 // exactly this shape, so no brittle text parsing is needed.
@@ -144,7 +144,7 @@ app.post('/analyze', async (req, res) => {
         // Not JSON; keep the truncated text.
       }
       const hint = upstream.status === 404
-        ? ` The model "${MODEL}" may not exist for your key; set GEMINI_MODEL in backend/.env (e.g. gemini-2.0-flash or gemini-1.5-flash).`
+        ? ` The model "${MODEL}" may not exist for your key; set GEMINI_MODEL in backend/.env (e.g. gemini-3.6-flash or gemini-flash-latest).`
         : upstream.status === 429
         ? ' You may be out of free quota; try again later.'
         : '';
