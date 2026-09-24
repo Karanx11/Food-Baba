@@ -1,4 +1,4 @@
-# Food Baba backend
+# Food Guruji backend
 
 A tiny Express server with one job: take a food photo from the app, ask a
 vision model what's on the plate, and return each food with an estimated
@@ -17,7 +17,7 @@ ships inside the mobile app.
    npm start
    ```
 
-   The server prints `Food Baba API on http://localhost:8787`.
+   The server prints `Food Guruji API on http://localhost:8787`.
 
 3. **Point the app at it.** Run the app with the backend URL:
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/core/dates.dart';
-import 'package:food_baba/features/log/application/log_providers.dart';
-import 'package:food_baba/features/log/domain/food_entry.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
-import 'package:food_baba/features/shell/home_shell.dart';
+import 'package:food_guruji/core/dates.dart';
+import 'package:food_guruji/features/log/application/log_providers.dart';
+import 'package:food_guruji/features/log/domain/food_entry.dart';
+import 'package:food_guruji/features/log/domain/nutrition.dart';
+import 'package:food_guruji/features/shell/home_shell.dart';
 
 import 'helpers/test_app.dart';
 

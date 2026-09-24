@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/core/db/app_database.dart';
-import 'package:food_baba/features/log/data/food_log_repository.dart';
-import 'package:food_baba/features/log/domain/food_entry.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
+import 'package:food_guruji/core/db/app_database.dart';
+import 'package:food_guruji/features/log/data/food_log_repository.dart';
+import 'package:food_guruji/features/log/domain/food_entry.dart';
+import 'package:food_guruji/features/log/domain/nutrition.dart';
 
 import 'helpers/test_app.dart';
 

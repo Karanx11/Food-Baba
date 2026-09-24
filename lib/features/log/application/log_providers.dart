@@ -11,7 +11,7 @@ final clockProvider = Provider<DateTime Function()>((_) => DateTime.now);
 
 /// Local database location and backend. Tests override with an in-memory one.
 final databaseConfigProvider = Provider<DatabaseConfig>(
-  (_) => platformDatabaseConfig('food_baba.db'),
+  (_) => platformDatabaseConfig('food_guruji.db'),
 );
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {

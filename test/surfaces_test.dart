@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/app/theme.dart';
-import 'package:food_baba/core/widgets/surfaces.dart';
-import 'package:food_baba/features/food_search/presentation/food_search_page.dart';
-import 'package:food_baba/features/shell/home_shell.dart';
+import 'package:food_guruji/app/theme.dart';
+import 'package:food_guruji/core/widgets/surfaces.dart';
+import 'package:food_guruji/features/food_search/presentation/food_search_page.dart';
+import 'package:food_guruji/features/shell/home_shell.dart';
 
 import 'helpers/test_app.dart';
 
@@ -70,14 +70,14 @@ void main() {
     expect(await paletteUnder(AppTheme.dark()), same(AppPalette.dark));
   });
 
-  test('primary buttons are ink pills and the accent is violet', () {
-    for (final (theme, palette) in [
-      (AppTheme.light(), AppPalette.light),
-      (AppTheme.dark(), AppPalette.dark),
-    ]) {
+  test('primary buttons are frosted-glass accent pills', () {
+    for (final theme in [AppTheme.light(), AppTheme.dark()]) {
       final style = theme.filledButtonTheme.style!;
-      expect(style.backgroundColor!.resolve({}), palette.ink);
-      expect(style.foregroundColor!.resolve({}), palette.onInk);
+      // The glass surface paints the fill, so the button itself is clear.
+      expect(style.backgroundColor!.resolve({}), Colors.transparent);
+      expect(style.backgroundBuilder, isNotNull);
+      // White label reads on the accent glass in both themes.
+      expect(style.foregroundColor!.resolve({}), Colors.white);
       expect(style.shape!.resolve({}), isA<StadiumBorder>());
     }
     expect(AppTheme.light().colorScheme.primary, AppColors.violet);

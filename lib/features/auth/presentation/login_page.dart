@@ -58,7 +58,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     return AuthScaffold(
       title: 'Welcome back',
-      subtitle: 'Sign in to Food Baba',
+      subtitle: 'Sign in to Food Guruji',
       children: [
         Form(
           key: _formKey,

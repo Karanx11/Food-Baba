@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/progress/domain/body_metrics.dart';
+import 'package:food_guruji/features/progress/domain/body_metrics.dart';
 
 void main() {
   group('BMI', () {

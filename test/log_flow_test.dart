@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/food_search/presentation/food_search_page.dart';
-import 'package:food_baba/features/log/domain/food_entry.dart';
-import 'package:food_baba/features/log/presentation/food_entry_form_page.dart';
-import 'package:food_baba/features/shell/home_shell.dart';
+import 'package:food_guruji/features/food_search/presentation/food_search_page.dart';
+import 'package:food_guruji/features/log/domain/food_entry.dart';
+import 'package:food_guruji/features/log/presentation/food_entry_form_page.dart';
+import 'package:food_guruji/features/shell/home_shell.dart';
 
 import 'helpers/test_app.dart';
 

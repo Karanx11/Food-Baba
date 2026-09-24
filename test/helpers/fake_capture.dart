@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:food_baba/features/capture/data/photo_source.dart';
-import 'package:food_baba/features/capture/domain/detected_food.dart';
-import 'package:food_baba/features/capture/domain/food_analyzer.dart';
-import 'package:food_baba/features/log/domain/nutrition.dart';
+import 'package:food_guruji/features/capture/data/photo_source.dart';
+import 'package:food_guruji/features/capture/domain/detected_food.dart';
+import 'package:food_guruji/features/capture/domain/food_analyzer.dart';
+import 'package:food_guruji/features/log/domain/nutrition.dart';
 
 /// A 1x1 PNG, enough for `Image.memory` to decode in the review screen.
 final kTinyPng = Uint8List.fromList([

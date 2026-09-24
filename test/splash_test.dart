@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/core/widgets/loaders/burger_loader.dart';
-import 'package:food_baba/features/shell/home_shell.dart';
+import 'package:food_guruji/core/widgets/loaders/burger_loader.dart';
+import 'package:food_guruji/features/shell/home_shell.dart';
 
 import 'helpers/test_app.dart';
 
@@ -11,7 +11,7 @@ void main() {
     await tester.pumpWidget(testApp());
 
     expect(find.byType(BurgerLoader), findsOneWidget);
-    expect(find.text('Food Baba'), findsOneWidget);
+    expect(find.text('Food Guruji'), findsOneWidget);
     expect(find.byType(HomeShell), findsNothing);
 
     // Still on the splash before the minimum duration elapses.

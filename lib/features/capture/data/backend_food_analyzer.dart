@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../domain/detected_food.dart';
 import '../domain/food_analyzer.dart';
 
-/// Sends the photo to the Food Baba backend, which calls the AI model with
+/// Sends the photo to the Food Guruji backend, which calls the AI model with
 /// the API key kept server-side. See `backend/README.md`.
 class BackendFoodAnalyzer implements FoodAnalyzer {
   BackendFoodAnalyzer({

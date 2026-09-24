@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/profile/data/profile_repository.dart';
-import 'package:food_baba/features/profile/domain/user_profile.dart';
-import 'package:food_baba/features/profile/presentation/profile_form_page.dart';
-import 'package:food_baba/features/profile/presentation/profile_page.dart';
-import 'package:food_baba/features/shell/home_shell.dart';
+import 'package:food_guruji/features/profile/data/profile_repository.dart';
+import 'package:food_guruji/features/profile/domain/user_profile.dart';
+import 'package:food_guruji/features/profile/presentation/profile_form_page.dart';
+import 'package:food_guruji/features/profile/presentation/profile_page.dart';
+import 'package:food_guruji/features/shell/home_shell.dart';
 
 import 'helpers/test_app.dart';
 

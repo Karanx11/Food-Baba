@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:food_baba/features/profile/data/profile_repository.dart';
-import 'package:food_baba/features/profile/domain/user_profile.dart';
+import 'package:food_guruji/features/profile/data/profile_repository.dart';
+import 'package:food_guruji/features/profile/domain/user_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';

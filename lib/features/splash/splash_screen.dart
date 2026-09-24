@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const BurgerLoader(size: 140),
             const SizedBox(height: 20),
             Text(
-              'Food Baba',
+              'Food Guruji',
               style: text.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.5,
