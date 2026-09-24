@@ -77,23 +77,38 @@ const FOOD_SCHEMA = {
 };
 
 const PROMPT = [
-  'You are a nutrition assistant. Identify every distinct food and drink in',
-  'this photo. For each one estimate the portion actually shown and its',
-  'nutrition for a single serving.',
+  'You are a careful nutrition estimator. Identify every distinct food and',
+  'drink in the photo and estimate its nutrition from standard food-',
+  'composition data (USDA FoodData Central and the Indian Food Composition',
+  'Tables). Be realistic and typical, never generous: when unsure use median',
+  'values, and do not inflate calories, protein or portion size.',
   '',
-  '- servingLabel: a natural household unit, e.g. "1 katori", "2 rotis",',
-  '  "1 glass", "1 bowl".',
+  'Estimate each item like this:',
+  '1. Judge the weight actually shown, in grams. Rough anchors: one',
+  '   home/restaurant plate of a mixed dish is about 300 g; one katori or',
+  '   bowl about 150 g; a glass about 250 ml; one roti about 40 g; one egg',
+  '   about 50 g.',
+  '2. Take its typical nutrition per 100 g, then scale to that weight.',
+  '3. Keep the macros consistent with the calories: per gram, calories are',
+  '   about 4*protein + 4*carbs + 9*fat.',
+  '',
+  'Report per ONE serving:',
+  '- servingLabel: a natural household unit, e.g. "1 plate", "1 katori",',
+  '  "2 rotis", "1 glass".',
   '- gramsPerServing: the weight of ONE such serving in grams.',
-  '- servings: how many of that serving are on the plate (may be fractional).',
-  '- calories, proteinG, carbsG, fatG, sugarG, fiberG are PER ONE serving;',
-  '  sodiumMg is per serving in milligrams.',
-  '- confidence: 0..1, how sure you are of the item.',
-  '- notes: a short phrase naming notable micronutrients or health facts,',
-  '  e.g. "High in calcium and vitamin B12" or "Rich in fibre and iron".',
-  '  Keep it under 12 words. Use an empty string if nothing stands out.',
+  '- servings: how many servings are on the plate. Use 1 for a single plate',
+  '  or bowl; only go above 1 when clearly separate extra portions are shown.',
+  '- calories, proteinG, carbsG, fatG, sugarG, fiberG per ONE serving;',
+  '  sodiumMg per serving in milligrams.',
+  '- confidence: 0..1.',
+  '- notes: a short phrase of notable micronutrients or health facts, under',
+  '  12 words; empty string if nothing stands out.',
   '',
-  'Prefer common Indian dishes when they match. If the photo has no food,',
-  'return an empty foods array.',
+  'Rice, breads and most mixed dishes are mainly carbohydrate, not protein.',
+  'Sanity check before answering: for example a normal plate of biryani is',
+  'about 450-650 kcal with 20-30 g protein, not more. Prefer common Indian',
+  'dishes when they match. If the photo has no food, return an empty foods',
+  'array.',
 ].join('\n');
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -195,7 +210,8 @@ app.post('/analyze', async (req, res) => {
     generationConfig: {
       responseMimeType: 'application/json',
       responseSchema: FOOD_SCHEMA,
-      temperature: 0.2,
+      // Low temperature keeps estimates near typical database values.
+      temperature: 0.1,
     },
   };
 
