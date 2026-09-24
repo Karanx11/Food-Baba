@@ -52,6 +52,19 @@ void main() {
     expect(seen, contains(equals(['Dal', 'Rice']))); // ordered by createdAt
   });
 
+  test('watchAllLoggedDays returns the distinct days with any food', () async {
+    await repo.upsert(
+      _entry('1', 'Dal', dayKey: '2026-09-22', at: DateTime(2026, 9, 22, 13)),
+    );
+    await repo.upsert(
+      _entry('2', 'Rice', dayKey: '2026-09-22', at: DateTime(2026, 9, 22, 14)),
+    );
+    await repo.upsert(
+      _entry('3', 'Poha', dayKey: '2026-09-20', at: DateTime(2026, 9, 20, 8)),
+    );
+    expect(await repo.watchAllLoggedDays().first, {'2026-09-20', '2026-09-22'});
+  });
+
   test('upsert with the same id replaces the entry', () async {
     final original = _entry('1', 'Dal', at: DateTime(2026, 9, 22, 13));
     await repo.upsert(original);

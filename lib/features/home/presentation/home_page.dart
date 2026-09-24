@@ -15,6 +15,7 @@ import '../../log/domain/food_entry.dart';
 import '../../profile/application/profile_providers.dart';
 import '../../profile/presentation/profile_form_page.dart';
 import '../../shell/shell_tab_provider.dart';
+import '../../streak/presentation/streak_card.dart';
 import 'meal_card.dart';
 import 'today_goal_card.dart';
 import 'week_strip.dart';
@@ -84,6 +85,8 @@ class HomePage extends ConsumerWidget {
               const _SetupNudge(),
               const SizedBox(height: 8),
             ],
+            const StreakCard(),
+            const SizedBox(height: 12),
             if (loading)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 48),
