@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../app/l10n/language_store.dart';
 import '../application/auth_providers.dart';
 import 'auth_scaffold.dart';
 import 'forgot_password_page.dart';
@@ -56,9 +57,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final s = ref.watch(stringsProvider);
     return AuthScaffold(
-      title: 'Welcome back',
-      subtitle: 'Sign in to Food Guruji',
+      title: s.welcomeBack,
+      subtitle: s.signInSubtitle,
       children: [
         Form(
           key: _formKey,
@@ -69,9 +71,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
                 autofillHints: const [AutofillHints.email],
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: s.emailLabel,
+                  border: const OutlineInputBorder(),
                 ),
                 validator: AuthValidators.email,
               ),
@@ -80,7 +82,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 controller: _password,
                 obscureText: _obscure,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: s.passwordLabel,
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     tooltip: _obscure ? 'Show' : 'Hide',
@@ -92,8 +94,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
                 ),
-                validator: (v) =>
-                    (v ?? '').isEmpty ? 'Enter your password' : null,
+                validator: (v) => (v ?? '').isEmpty ? s.enterPassword : null,
                 onFieldSubmitted: (_) => _submit(),
               ),
               Align(
@@ -103,7 +104,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ? null
                       : () => Navigator.of(context)
                             .push(ForgotPasswordPage.route(_email.text.trim())),
-                  child: const Text('Forgot password?'),
+                  child: Text(s.forgotPassword),
                 ),
               ),
               const SizedBox(height: 4),
@@ -112,7 +113,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),
                 ),
-                child: Text(_busy ? 'Signing in…' : 'Log in'),
+                child: Text(_busy ? s.signingIn : s.logIn),
               ),
             ],
           ),

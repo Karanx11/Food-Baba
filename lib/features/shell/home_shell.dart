@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/l10n/app_strings.dart';
+import '../../app/l10n/language_store.dart';
 import '../../core/widgets/circle_icon_button.dart';
 import '../../core/widgets/surfaces.dart';
 import '../capture/presentation/capture_flow.dart';
@@ -31,6 +33,7 @@ class HomeShell extends ConsumerWidget {
       body: IndexedStack(index: index, children: _pages),
       bottomNavigationBar: _BottomNav(
         index: index,
+        strings: ref.watch(stringsProvider),
         onTab: ref.read(shellTabProvider.notifier).select,
         onSnap: () => CaptureFlow.start(context, ref),
       ),
@@ -41,11 +44,13 @@ class HomeShell extends ConsumerWidget {
 class _BottomNav extends StatelessWidget {
   const _BottomNav({
     required this.index,
+    required this.strings,
     required this.onTab,
     required this.onSnap,
   });
 
   final int index;
+  final AppStrings strings;
   final ValueChanged<int> onTab;
   final VoidCallback onSnap;
 
@@ -72,30 +77,35 @@ class _BottomNav extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          tab(ShellTabs.home, 'Home', Icons.home_outlined, Icons.home_rounded),
+          tab(
+            ShellTabs.home,
+            strings.navHome,
+            Icons.home_outlined,
+            Icons.home_rounded,
+          ),
           tab(
             ShellTabs.log,
-            'Food log',
+            strings.navLog,
             Icons.room_service_outlined,
             Icons.room_service_rounded,
           ),
           CircleIconButton(
             key: const Key('nav-snap'),
             icon: Icons.document_scanner_outlined,
-            tooltip: 'Snap food',
+            tooltip: strings.navSnap,
             size: 52,
             foreground: palette.muted,
             onPressed: onSnap,
           ),
           tab(
             ShellTabs.analyze,
-            'Progress',
+            strings.navProgress,
             Icons.pie_chart_outline_rounded,
             Icons.pie_chart_rounded,
           ),
           tab(
             ShellTabs.profile,
-            'Profile',
+            strings.navProfile,
             Icons.person_outline_rounded,
             Icons.person_rounded,
           ),
